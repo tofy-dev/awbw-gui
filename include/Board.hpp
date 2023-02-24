@@ -7,7 +7,10 @@
 class Board {
 public:
   Board(std::string path, RenderWindow* window);
+  void handleClick();
+  void renderBoard();
   void printBoardIds();
+
 private:
   // note: coordinates in AWBW are x by y, top-left origin, 0 indexed
   RenderWindow* window_;

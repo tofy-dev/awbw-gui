@@ -19,23 +19,18 @@ int main(int argc, char* args[]) {
 
   bool running = true;
   SDL_Event event;
-  Board b("res/inputs/stalingrad.txt", &window);
+  Board board("res/inputs/shadowsendlessly.txt", &window);
+
+  board.renderBoard();
+  window.display();
 
   while (running) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT)
         running = false;
+      if (event.type == SDL_MOUSEBUTTONDOWN)
+        board.handleClick(event);
     }
-
-    /*
-    window.clear();
-    SDL_Rect src;
-    src.x = 0; src.y = 0; src.w = 490; src.h = 490;
-
-    SDL_Rect dst;
-    dst.x = 0; dst.y = 0; dst.w = 490; dst.h = 490;
-    window.display();
-    */
   }
 
   SDL_Quit();
