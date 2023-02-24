@@ -1,13 +1,14 @@
 #pragma once
-#include "RenderWindow.hpp"
-#include "Tile.hpp"
+#include <SDL2/SDL_events.h>
 #include <vector>
 #include <string>
+#include "RenderWindow.hpp"
+#include "Tile.hpp"
 
 class Board {
 public:
   Board(std::string path, RenderWindow* window);
-  void handleClick();
+  void handleClick(SDL_MouseButtonEvent*);
   void renderBoard();
   void printBoardIds();
 

@@ -1,10 +1,12 @@
-#include "Board.hpp"
-#include "Tile.hpp"
-#include "RenderWindow.hpp"
+#include <SDL2/SDL_events.h>
 #include <cstdio>
 #include <string>
 #include <vector>
 #include <iostream>
+
+#include "Board.hpp"
+#include "Tile.hpp"
+#include "RenderWindow.hpp"
 
 #define SIZE 30
 
@@ -30,8 +32,12 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
   printBoardIds();
 }
 
-void Board::handleClick() {
+void Board::handleClick(SDL_MouseButtonEvent* event) {
+  int x = event->x, y = event->y;
+  if (y >= rows_*SIZE || x >= cols_*SIZE) return;
 
+  std::cout << x/SIZE << " " << y/SIZE << '\n';
+  grid_[y/SIZE][x/SIZE].onClick();
 }
 
 void Board::renderBoard() {

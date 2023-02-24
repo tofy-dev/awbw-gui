@@ -19,7 +19,7 @@ int main(int argc, char* args[]) {
 
   bool running = true;
   SDL_Event event;
-  Board board("res/inputs/shadowsendlessly.txt", &window);
+  Board board("res/inputs/stalingrad.txt", &window);
 
   board.renderBoard();
   window.display();
@@ -29,7 +29,7 @@ int main(int argc, char* args[]) {
       if (event.type == SDL_QUIT)
         running = false;
       if (event.type == SDL_MOUSEBUTTONDOWN)
-        board.handleClick(event);
+        board.handleClick(&event.button);
     }
   }
 
