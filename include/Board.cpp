@@ -25,7 +25,7 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
   }
 
   std::cout << rows_ << " by " << cols_ << '\n';
-  printBoard();
+  printBoardIds();
 }
 
 void Board::printBoardIds() {
