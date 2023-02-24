@@ -19,7 +19,7 @@ int main(int argc, char* args[]) {
 
   bool running = true;
   SDL_Event event;
-  Board board("res/inputs/stalingrad.txt", &window);
+  Board board("res/inputs/shadowsendlessly.txt", &window);
 
   board.renderBoard();
   window.display();

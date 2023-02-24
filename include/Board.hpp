@@ -2,6 +2,7 @@
 #include <SDL2/SDL_events.h>
 #include <vector>
 #include <string>
+#include <memory>
 #include "RenderWindow.hpp"
 #include "Tile.hpp"
 
@@ -15,6 +16,6 @@ public:
 private:
   // note: coordinates in AWBW are x by y, top-left origin, 0 indexed
   RenderWindow* window_;
-  std::vector<std::vector<Tile>> grid_;
+  std::vector<std::vector<std::unique_ptr<Tile>>> grid_;
   int rows_ = 0, cols_ = 0;
 };
