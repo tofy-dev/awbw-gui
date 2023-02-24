@@ -17,11 +17,11 @@ int main(int argc, char* args[]) {
     std::cout << "IMG_Init fails with error: " << SDL_GetError() << '\n';
   }
 
-  RenderWindow window("Test", 1280, 720);
+  RenderWindow window("awbw gui", 1280, 720);
 
   bool running = true;
   SDL_Event event;
-  Board board("res/inputs/shadowsendlessly.txt", &window);
+  Board board("res/inputs/stalingrad.txt", &window);
 
   board.renderBoard();
   window.display();

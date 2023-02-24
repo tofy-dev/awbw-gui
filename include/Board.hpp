@@ -5,6 +5,7 @@
 #include <memory>
 #include "RenderWindow.hpp"
 #include "Tile.hpp"
+#include "Unit.hpp"
 
 class Board {
 public:
@@ -15,7 +16,6 @@ public:
   void printBoardIds();
 
 private:
-  std::unique_ptr<Tile> foo_;
   // note: coordinates in AWBW are x by y, top-left origin, 0 indexed
   RenderWindow* window_;
   std::vector<std::vector<std::unique_ptr<Tile>>> grid_;

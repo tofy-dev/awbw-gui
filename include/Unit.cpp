@@ -2,6 +2,10 @@
 #include "RenderWindow.hpp"
 #include <string>
 
+Unit::Unit() {
+  name_ = "";
+}
+
 Unit::Unit(std::string country, std::string name, int x, int y, RenderWindow* window) : name_{name}, x_{x}, y_{y}, window_{window}{
   texture_ = window->loadTexture(("res/assets/units/" + country + name + ".gif").c_str());
 }

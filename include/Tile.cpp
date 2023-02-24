@@ -51,11 +51,11 @@ std::string Tile::getName(int id) {
 int Tile::getId() {
   return id_;
 }
-void Tile::setUnit(Unit* unit) {
+void Tile::setUnit(Unit unit) {
   unit_ = unit;
 }
-Unit* Tile::getUnit() {
-  return unit_;
+std::optional<Unit> Tile::getUnit() {
+  return (unit_.getName() != "") ? std::optional<Unit>{unit_} : std::nullopt;
 }
 SDL_Texture* Tile::getTexture() {
   return texture_;

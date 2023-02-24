@@ -8,7 +8,9 @@
 
 class Unit {
 public:
+  Unit();
   Unit(std::string country, std::string name, int x, int y, RenderWindow* window);
+  ~Unit() {std::cout << "UNIT DIES!\n";}
   void setPosition(int x, int y);
   void move(int x_off, int y_off);
 

@@ -5,6 +5,7 @@
 #include <array>
 #include <memory>
 #include <string>
+#include <optional>
 #include "RenderWindow.hpp"
 #include "Unit.hpp"
 
@@ -14,18 +15,18 @@ public:
   static std::unique_ptr<Tile> createTile(int id, RenderWindow* window);
   static std::string getName(int id);
 
-  virtual ~Tile() = default;
+  virtual ~Tile() {std::cout << "TILE DESTROYED!\n";};
   virtual void onClick() = 0;
   std::array<int, 2> getDims(int basic);
 
   int getId();
-  void setUnit(Unit* unit);
-  Unit* getUnit();
+  void setUnit(Unit unit);
+  std::optional<Unit> getUnit();
   SDL_Texture* getTexture();
 
 protected:
   int id_;
-  Unit* unit_ = NULL;
+  Unit unit_{};
   int h_mult_ = 16;
 
   SDL_Texture* texture_;
