@@ -1,11 +1,12 @@
 #pragma once
-#include "RenderWindow.hpp"
-#include <array>
-#include <memory>
-#include <string>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_render.h>
+#include <array>
+#include <memory>
+#include <string>
+#include "RenderWindow.hpp"
+#include "Unit.hpp"
 
 class Tile {
 public:
@@ -18,13 +19,13 @@ public:
   std::array<int, 2> getDims(int basic);
 
   int getId();
-  bool isActive();
+  void setUnit(Unit* unit);
+  Unit* getUnit();
   SDL_Texture* getTexture();
 
 protected:
   int id_;
-  bool active_;
-
+  Unit* unit_ = NULL;
   int h_mult_ = 16;
 
   SDL_Texture* texture_;

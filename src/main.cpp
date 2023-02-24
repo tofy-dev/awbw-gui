@@ -5,6 +5,8 @@
 
 #include "RenderWindow.hpp"
 #include "Board.hpp"
+#include "Unit.hpp"
+#include "Tile.hpp"
 
 int main(int argc, char* args[]) {
   if (SDL_Init(SDL_INIT_VIDEO) > 0) {
@@ -28,8 +30,10 @@ int main(int argc, char* args[]) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT)
         running = false;
-      if (event.type == SDL_MOUSEBUTTONDOWN)
+      if (event.type == SDL_MOUSEBUTTONDOWN) {
         board.handleClick(&event.button);
+        board.renderBoard();
+      }
     }
   }
 

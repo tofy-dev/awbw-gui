@@ -51,8 +51,11 @@ std::string Tile::getName(int id) {
 int Tile::getId() {
   return id_;
 }
-bool Tile::isActive() {
-  return active_;
+void Tile::setUnit(Unit* unit) {
+  unit_ = unit;
+}
+Unit* Tile::getUnit() {
+  return unit_;
 }
 SDL_Texture* Tile::getTexture() {
   return texture_;

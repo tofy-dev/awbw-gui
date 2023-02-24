@@ -32,14 +32,25 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
 
   std::cout << rows_ << " by " << cols_ << '\n';
   printBoardIds();
+  
+  // TODO : DELETE!!!!!!!!!!!!!!!!!!!
+  foo_ = Tile::createTile(1, window);
+  Unit un("bh", "mech", 0, 0, window);
+  foo_->setUnit(&un);
+}
+
+void Board::addUnit(std::string country, std::string name, int x, int y) {
+  Unit un(country, name, x, y, window_);
+  grid_[y][x]->setUnit(&un);
 }
 
 void Board::handleClick(SDL_MouseButtonEvent* event) {
   int x = event->x, y = event->y;
   if (y >= rows_*SIZE || x >= cols_*SIZE) return;
 
-  std::cout << x/SIZE << " " << y/SIZE << '\n';
   grid_[y/SIZE][x/SIZE]->onClick();
+  addUnit("bh", "mech", x/SIZE, y/SIZE);
+  window_->display();
 }
 
 void Board::renderBoard() {
@@ -52,8 +63,19 @@ void Board::renderBoard() {
       SDL_Rect dst; dst.x = SIZE*c; dst.y = SIZE*r-(height-SIZE); dst.w = width; dst.h = height;
 
       window_->render(grid_[r][c]->getTexture(), src, dst);
+      if (grid_[r][c]->getUnit() != NULL) {
+        std::cout << r << " " << c << '\n';
+        src.x = 0; src.y = 0; src.w = SIZE; src.h = SIZE;
+        dst.x = SIZE*c; dst.y = SIZE*r; dst.w = SIZE; dst.h = SIZE;
+
+        // window_->render(grid_[r][c]->getUnit()->getTexture(), src, dst);
+        // window_->render(un.getTexture(), src, dst);
+        // window_->render(window_->loadTexture(("res/assets/units/bhmech.gif")), src, dst);
+      }
     }
   }
+
+  window_->render(foo_->getUnit()->getTexture(), SDL_Rect(),SDL_Rect());
 }
 
 void Board::printBoardIds() {
