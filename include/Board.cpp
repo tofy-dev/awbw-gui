@@ -1,18 +1,37 @@
 #include "Board.hpp"
+#include "Tile.hpp"
+#include "RenderWindow.hpp"
 #include <cstdio>
 #include <string>
+#include <vector>
 #include <iostream>
 
-Board::Board(std::string path) {
+Board::Board(std::string path, RenderWindow* window) : window_(window) {
   freopen(path.c_str(), "r", stdin);
   std::string line;
+
   while (std::getline(std::cin, line)) {
+    std::vector<Tile> row;
     int s = 0;
     for (int i = 0; i <= line.size(); i++) {
       if (i == line.size() || line.at(i) == ',') {
-        std::cout << line.substr(s,i-s) << ' ';
+        row.push_back(Tile(std::stoi(line.substr(s,i-s))));
         s = i+1;
+        if (rows_ == 0) cols_++;
       }
+    }
+    grid_.push_back(row);
+    rows_++;
+  }
+
+  std::cout << rows_ << " by " << cols_ << '\n';
+  printBoard();
+}
+
+void Board::printBoardIds() {
+  for (int r = 0; r < grid_.size(); r++) {
+    for (int c = 0; c < grid_[r].size(); c++) {
+      std::cout << grid_[r][c].getId() << ((c == grid_[r].size()-1) ? "\n" : " ");
     }
     std::cout << '\n';
   }
