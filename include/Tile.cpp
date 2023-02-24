@@ -8,7 +8,7 @@
 #define DNE std::string::npos
 
 Tile::Tile(int id, RenderWindow* window) : id_{id}, window_(window) {
-  texture_ = window->loadTexture(("res/assets/" + getName() + ".gif").c_str());
+  texture_ = window->loadTexture(("res/assets/tiles/" + getName() + ".gif").c_str());
 }
 
 void Tile::onClick() {
