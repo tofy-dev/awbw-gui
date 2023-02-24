@@ -44,7 +44,6 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
 
   grid_[y/SIZE][x/SIZE]->onClick();
   addUnit("bh", "mech", x/SIZE, y/SIZE);
-  window_->display();
 }
 
 void Board::renderBoard() {
@@ -64,13 +63,9 @@ void Board::renderBoard() {
 
         window_->render(grid_[r][c]->getUnit()->getTexture(), src, dst);
         std::cout << grid_[r][c]->getUnit()->getName();
-        // window_->render(un.getTexture(), src, dst);
-        // window_->render(window_->loadTexture(("res/assets/units/bhmech.gif")), src, dst);
       }
     }
   }
-
-  // window_->render(foo_->getUnit()->getTexture(), SDL_Rect(),SDL_Rect());
 }
 
 void Board::printBoardIds() {
