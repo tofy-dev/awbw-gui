@@ -41,9 +41,15 @@ void Board::addUnit(std::string country, std::string name, int x, int y) {
 void Board::handleClick(SDL_MouseButtonEvent* event) {
   int x = event->x, y = event->y;
   if (y >= rows_*SIZE || x >= cols_*SIZE) return;
-
+  switch (event->button) {
+    case SDL_BUTTON_LEFT:
+      addUnit("os", "mech", x/SIZE, y/SIZE);
+      break;
+    case SDL_BUTTON_RIGHT:
+      addUnit("bm", "mech", x/SIZE, y/SIZE);
+      break;
+  }
   grid_[y/SIZE][x/SIZE]->onClick();
-  addUnit("bh", "mech", x/SIZE, y/SIZE);
 }
 
 void Board::renderBoard() {

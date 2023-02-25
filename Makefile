@@ -3,7 +3,7 @@ CXX = clang++
 COMPILER_FLAGS = -w -Iinclude/ --std=c++17
 LINKER_FLAGS = -lSDL2main -lSDL2 -lSDL2_image
 
-CPP_FILES = src/main.cpp include/*.cpp
+CPP_FILES = src/Main.cpp include/*.cpp
 OUTPUT_NAME = bin/output
 
 all: $(OBJ_NAMES)
