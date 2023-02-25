@@ -8,6 +8,7 @@
 #include "Unit.hpp"
 #include "Tile.hpp"
 #include "FPSTimer.hpp"
+#include "GIFWrapper.hpp"
 
 const int SCREEN_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
@@ -22,11 +23,12 @@ int main(int argc, char* args[]) {
   }
 
   RenderWindow window("awbw gui", 1280, 720);
-  window.display();
+  GIFImage foo("res/assets/units/jsb-copter.gif");
 
   Board board("res/inputs/stalingrad.txt", &window);
   board.renderBoard();
   window.display();
+
 
   bool running = true;
   int frame = 0;

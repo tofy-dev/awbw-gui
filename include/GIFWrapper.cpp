@@ -1,6 +1,11 @@
+/*
+ * Copied from https://github.com/grimfang4/SDL_gifwrap
+ */
+
 #pragma once
 #include "GIFWrapper.hpp"
-#include "SDL_pixels.h"
+#include <SDL2/SDL_error.h>
+#include <SDL2/SDL_pixels.h>
 #include <vector>
 #include <gif_lib.h>
 #include <iostream>
@@ -8,7 +13,7 @@
 #include <cassert>
 
 GIFImage::GIFImage(std::string path) {
-  file_ = DGifOpenFileName("abbomber.gif", &error_);
+  file_ = DGifOpenFileName(path.c_str(), &error_);
   assert(file_ != NULL);
   if (DGifSlurp(file_) != GIF_OK) {
     DGifCloseFile(file_, &error_);
@@ -16,23 +21,32 @@ GIFImage::GIFImage(std::string path) {
   } else {
     width_ = file_->SWidth;
     height_ = file_->SHeight;
+    std::cout << "Sets width, height\n";
 
     // Generate palette
     global_palette_ = SDL_AllocPalette(file_->SColorMap->ColorCount);
+    std::cout << "Creates palette of size " << file_->SColorMap->ColorCount << "\n";
     createPalette(global_palette_, file_->SColorMap);
+    std::cout << "Creates palettes\n";
 
     // Do frames
     num_frames_ = file_->ImageCount;
     frames_ = std::vector<GIFFrame*>(num_frames_);
+    std::cout << "Creates " << num_frames_ << " frames\n";
     for (int i = 0; i < num_frames_; i++) {
+      std::cout << i << "\n";
       SavedImage* img = &file_->SavedImages[i];
-      GIFFrame* frame;
+      GIFFrame* frame = (GIFFrame*)SDL_malloc(sizeof(GIFFrame));
+      memset(frame, 0, sizeof(GIFFrame));
+      std::cout << "Checkpoint A\n";
 
       frames_[i] = frame;
+      frame->width_ = 30;
       frame->width_ = img->ImageDesc.Width;
       frame->height_ = img->ImageDesc.Height;
       frame->left_off_ = img->ImageDesc.Left;
       frame->top_off_ = img->ImageDesc.Top;
+      std::cout << "Checkpoint B\n";
       
       SDL_Palette* local_palette = NULL;
       if (img->ImageDesc.ColorMap != NULL) {
@@ -40,6 +54,7 @@ GIFImage::GIFImage(std::string path) {
         createPalette(local_palette, img->ImageDesc.ColorMap);
         frame->setPalette(local_palette);
       }
+      std::cout << "Checkpoint C\n";
 
       SDL_Palette* temp_pal = (local_palette == NULL) ? global_palette_ : local_palette;
       for (int j = 0; j < img->ExtensionBlockCount; j++) {
@@ -55,11 +70,13 @@ GIFImage::GIFImage(std::string path) {
             frame->transparent_color_ = temp_pal->colors[frame->trans_idx_];
         }
       }
+      std::cout << "Checkpoint D\n";
 
       // Create surface
       int count = img->ImageDesc.Width * img->ImageDesc.Height;
       frame->setSurface(createSurface(frame->width_, frame->height_));
       frame->has_surface_ = SDL_TRUE;
+      std::cout << "Checkpoint E\n";
 
       if (temp_pal != NULL) {
         for (int j = 0; j < count; j++) {
@@ -69,18 +86,20 @@ GIFImage::GIFImage(std::string path) {
           set_pixel(frame->getSurface(), j%frame->width_, j/frame->width_, SDL_MapRGBA(frame->getSurface()->format, c.r, c.g, c.b, c.a));
         }
       }
+      std::cout << "Checkpoint F\n";
     }
 
     DGifCloseFile(file_, &error_);
   }
+  std::cout << "done!\n";
 }
 
 void GIFImage::createPalette(SDL_Palette* palette, ColorMapObject* map) {
   for (int i = 0; i < map->ColorCount; i++) {
-    palette[i].colors->r = map->Colors->Red;
-    palette[i].colors->g = map->Colors->Green;
-    palette[i].colors->b = map->Colors->Blue;
-    palette[i].colors->a = 255;
+    palette->colors[i].r = map->Colors->Red;
+    palette->colors[i].g = map->Colors->Green;
+    palette->colors[i].b = map->Colors->Blue;
+    palette->colors[i].a = 255;
   }
 }
 
