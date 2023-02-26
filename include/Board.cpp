@@ -31,11 +31,6 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
   }
 
   std::cout << rows_ << " by " << cols_ << '\n';
-  printBoardIds();
-}
-
-void Board::addUnit(std::string country, std::string name, int x, int y) {
-  grid_[y][x]->setUnit(Unit(country, name, x, y, window_));
 }
 
 void Board::handleClick(SDL_MouseButtonEvent* event) {
@@ -62,22 +57,24 @@ void Board::renderBoard() {
       SDL_Rect dst; dst.x = SIZE*c; dst.y = SIZE*r-(height-SIZE); dst.w = width; dst.h = height;
 
       window_->render(grid_[r][c]->getTexture(), src, dst);
-      if (grid_[r][c]->getUnit().has_value()) {
-        std::cout << r << " " << c << '\n';
+      if (grid_[r][c]->getUnit() != nullptr) {
         src.x = 0; src.y = 0; src.w = SIZE; src.h = SIZE;
         dst.x = SIZE*c; dst.y = SIZE*r; dst.w = SIZE; dst.h = SIZE;
 
         window_->render(grid_[r][c]->getUnit()->getTexture(), src, dst);
-        std::cout << grid_[r][c]->getUnit()->getName();
       }
     }
   }
 }
 
-void Board::printBoardIds() {
-  for (int r = 0; r < grid_.size(); r++) {
-    for (int c = 0; c < grid_[r].size(); c++) {
-      std::cout << grid_[r][c]->getId() << ((c == grid_[r].size()-1) ? "\n" : " ");
+void Board::addUnit(std::string country, std::string name, int x, int y) {
+  grid_[y][x]->setUnit(Unit::createUnit(country, name, window_));
+}
+
+void Board::wipeUnits() {
+  for (int r = 0; r < rows_; r++) {
+    for (int c = 0; c < cols_; c++) {
+      grid_[r][c]->setUnit(nullptr);
     }
   }
 }

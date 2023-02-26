@@ -19,14 +19,15 @@ public:
   virtual void onClick() = 0;
   std::array<int, 2> getDims(int basic);
 
+  void setUnit(Unit* unit);
+
   int getId();
-  void setUnit(Unit unit);
-  std::optional<Unit> getUnit();
+  Unit* getUnit();
   SDL_Texture* getTexture();
 
 protected:
   int id_;
-  Unit unit_{};
+  Unit* unit_ = nullptr;
   int h_mult_ = 16;
 
   SDL_Texture* texture_;

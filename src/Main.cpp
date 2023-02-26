@@ -43,6 +43,12 @@ int main(int argc, char* args[]) {
       if (event.type == SDL_MOUSEBUTTONDOWN) {
         board.handleClick(&event.button);
       }
+      if (event.type == SDL_KEYDOWN) {
+        if (event.key.keysym.sym == SDLK_BACKSPACE) {
+          std::cout << "BCSP\n";
+          board.wipeUnits();
+        }
+      }
     }
 
     board.renderBoard();

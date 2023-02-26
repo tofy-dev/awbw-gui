@@ -11,9 +11,9 @@ class Board {
 public:
   Board(std::string path, RenderWindow* window);
   void handleClick(SDL_MouseButtonEvent*);
-  void addUnit(std::string country, std::string name, int x, int y);
   void renderBoard();
-  void printBoardIds();
+  void addUnit(std::string country, std::string name, int x, int y);
+  void wipeUnits();
 
 private:
   // note: coordinates in AWBW are x by y, top-left origin, 0 indexed

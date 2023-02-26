@@ -8,19 +8,21 @@
 
 class Unit {
 public:
-  Unit();
-  Unit(std::string country, std::string name, int x, int y, RenderWindow* window);
-  ~Unit() {std::cout << "UNIT DIES!\n";}
-  void setPosition(int x, int y);
-  void move(int x_off, int y_off);
+  static Unit* createUnit(std::string country, std::string name, RenderWindow* window);
 
   std::string getName();
+  std::string getCountry();
   SDL_Texture* getTexture();
 
-private:
-  std::string name_;
-  int x_, y_;
+  void setName(std::string name) {name_ = name;};
+  void setCountry(std::string country) {country_ = country;};
+  void setTexture(SDL_Texture* texture) {texture_ = texture;};
 
+private:
+  Unit* unit_;
+
+  std::string name_;
+  std::string country_;
   SDL_Texture* texture_;
   RenderWindow* window_;
 };

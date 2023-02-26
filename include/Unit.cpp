@@ -1,26 +1,25 @@
 #include "Unit.hpp"
 #include "RenderWindow.hpp"
+#include <cstdlib>
 #include <string>
 
-Unit::Unit() {
-  name_ = "";
-}
+Unit* Unit::createUnit(std::string country, std::string name, RenderWindow* window) {
+  Unit* unit = (Unit*)SDL_malloc(sizeof(Unit));
+  memset(unit, 0, sizeof(Unit));
+  unit->unit_ = unit;
+  unit->name_ = name;
+  unit->country_ = country;
+  unit->window_ = window;
+  unit->texture_ = window->loadTexture(("res/assets/units/" + country + name + ".gif").c_str());
 
-Unit::Unit(std::string country, std::string name, int x, int y, RenderWindow* window) : name_{name}, x_{x}, y_{y}, window_{window}{
-  texture_ = window->loadTexture(("res/assets/units/" + country + name + ".gif").c_str());
-}
-
-void Unit::setPosition(int x, int y) {
-  x_ = x;
-  y_ = y;
-}
-
-void Unit::move(int x_off, int y_off) {
-  x_ += x_off;
-  y_ += y_off;
+  return unit;
 }
 
 std::string Unit::getName() {
+  return name_;
+}
+
+std::string Unit::getCountry() {
   return name_;
 }
 
