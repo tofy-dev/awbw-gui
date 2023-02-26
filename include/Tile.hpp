@@ -15,7 +15,7 @@ public:
   static std::unique_ptr<Tile> createTile(int id, RenderWindow* window);
   static std::string getName(int id);
 
-  virtual ~Tile() {std::cout << "TILE DESTROYED!\n";};
+  virtual ~Tile() = default;
   virtual void onClick() = 0;
   std::array<int, 2> getDims(int basic);
 

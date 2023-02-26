@@ -13,7 +13,7 @@ Tile::Tile(int id, RenderWindow* window) : id_{id}, window_(window) {
   texture_ = window->loadTexture(("res/assets/tiles/" + getName(id) + ".gif").c_str());
 }
 
-Tile::createTile(int id, RenderWindow* window) {
+std::unique_ptr<Tile> Tile::createTile(int id, RenderWindow* window) {
   std::string name = Tile::getName(id);
   std::unique_ptr<Tile> ptr;
   if (name.find("city") != DNE)

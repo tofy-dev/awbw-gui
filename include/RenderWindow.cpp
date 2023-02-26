@@ -7,7 +7,6 @@
 
 RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h) : window_(NULL), renderer_(NULL) {
   window_ = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN);
-  std::cout << window_ << '\n';
   if (window_ == NULL) {
     std::cout << "SDL_CreateWindow failed with error: " << SDL_GetError() << '\n';
   }
@@ -26,7 +25,7 @@ SDL_Texture* RenderWindow::loadTexture(const char* p_filePath) {
 }
 
 SDL_Texture* RenderWindow::loadTexture(GIFImage* img) {
-  return SDL_CreateTextureFromSurface(renderer_, img->getFrame()->getSurface());
+  return SDL_CreateTextureFromSurface(renderer_, img->getFrame()->surface_);
 }
 
 void RenderWindow::clear() {
