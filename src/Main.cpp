@@ -22,18 +22,12 @@ int main(int argc, char* args[]) {
     std::cout << "IMG_Init fails with error: " << SDL_GetError() << '\n';
   }
 
-  RenderWindow window("awbw gui", 1920, 1080);
+  RenderWindow window("awbw gui", 1280, 720);
   SDL_Rect a; a.x = 0; a.y = 0; a.h = 100; a.w = 100;
-  SDL_Rect b; b.h = 100; b.w = 100;
 
-  GIFImage foo("res/assets/units/jstank.gif");
+  GIFImage foo("res/assets/units/jsb-copter.gif");
   foo.setFrameNumber(0);
-  for (int r = 0; r < 30; r++) {
-    for (int c = 0; c < 30; c++) {
-      b.x = b.w*c; b.y = b.h*r;
-      window.render(window.loadTexture(&foo), a, b);
-    }
-  }
+  window.render(window.loadTexture(&foo), a, a);
 
   /*
   Board board("res/inputs/stalingrad.txt", &window);

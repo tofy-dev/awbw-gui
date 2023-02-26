@@ -6,6 +6,7 @@
 #include "GIFWrapper.hpp"
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_surface.h>
 #include <vector>
 #include <gif_lib.h>
 #include <iostream>
@@ -25,6 +26,7 @@ GIFImage::GIFImage(std::string path) {
     global_colors[i].b = gif->SColorMap->Colors[i].Blue;
     global_colors[i].a = 255;
   }
+  assert(global_colors != NULL);
 
   frames_ = std::vector<GIFFrame*>(gif->ImageCount);
   for (int f = 0; f < gif->ImageCount; f++) {
@@ -33,7 +35,7 @@ GIFImage::GIFImage(std::string path) {
     memset(frame, 0, sizeof(GIFFrame));
 
     SDL_Color* local_colors = NULL;
-    if (img->ImageDesc.ColorMap == NULL) {
+    if (img->ImageDesc.ColorMap != NULL) {
       local_colors = (SDL_Color*)SDL_malloc(sizeof(SDL_Color)*gif->SColorMap->ColorCount);
     }
 
@@ -48,6 +50,7 @@ GIFImage::GIFImage(std::string path) {
     SDL_Color* color_src = (local_colors == NULL) ? global_colors : local_colors;
     for (int p = 0; p < total_pixels; p++) {
       SDL_Color c = color_src[img->RasterBits[p]];
+      std::cout << (int)c.r << " " << (int)c.g << " " << (int)c.b << " " << (int)c.a << '\n';
       setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
     }
 
@@ -58,36 +61,15 @@ GIFImage::GIFImage(std::string path) {
 }
 
 SDL_Surface* GIFImage::createSurface(int width, int height) {
-  return SDL_CreateRGBSurface(0,width,height,32,0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+  return SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
 }
 
 void GIFImage::setPixel(SDL_Surface* surface, int x, int y, Uint32 color) {
-    int bpp = surface->format->BytesPerPixel;
-    Uint8* bits = ((Uint8 *)surface->pixels) + y*surface->pitch + x*bpp;
+  SDL_Rect rect;
+  rect.x = x; rect.y = y;
+  rect.w = 1; rect.h = 1;
 
-    /* Set the pixel */
-    switch(bpp)
-    {
-        case 1:
-            *((Uint8 *)(bits)) = (Uint8)color;
-            break;
-        case 2:
-            *((Uint16 *)(bits)) = (Uint16)color;
-            break;
-        case 3: { /* Format/endian independent */
-            Uint8 r,g,b;
-            r = (color >> surface->format->Rshift) & 0xFF;
-            g = (color >> surface->format->Gshift) & 0xFF;
-            b = (color >> surface->format->Bshift) & 0xFF;
-            *((bits)+surface->format->Rshift/8) = r;
-            *((bits)+surface->format->Gshift/8) = g;
-            *((bits)+surface->format->Bshift/8) = b;
-            }
-            break;
-        case 4:
-            *((Uint32 *)(bits)) = (Uint32)color;
-            break;
-    }
+  SDL_FillRect(surface, &rect, color);
 }
 
 void GIFImage::setFrameNumber(int frame_num) {
