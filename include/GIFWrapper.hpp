@@ -26,6 +26,7 @@ public:
 
   static SDL_Surface* createSurface(int width, int height);
   static void setPixel(SDL_Surface* surface, int x, int y, Uint32 color);
+  static void setPixel(SDL_Surface* surface, SDL_Surface* dst, int x, int y); 
 
 private:
   int width_, height_;

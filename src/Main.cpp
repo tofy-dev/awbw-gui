@@ -25,14 +25,9 @@ int main(int argc, char* args[]) {
   RenderWindow window("awbw gui", 1280, 720);
   SDL_Rect a; a.x = 0; a.y = 0; a.h = 100; a.w = 100;
 
-  // GIFImage foo("res/assets/units/jsb-copter.gif");
-  // foo.setFrameNumber(0);
-  // window.render(window.loadTexture(&foo), a, a);
-
   Board board("res/inputs/stalingrad.txt", &window);
   board.renderBoard();
   window.display();
-
 
   bool running = true;
   int frame = 0;
@@ -57,9 +52,8 @@ int main(int argc, char* args[]) {
     }
     // TODO: make not arbitrary
     int animTicks = animTimer.getTicks();
-    if (animTicks >= SCREEN_TICKS_PER_FRAME*10) {
+    if (animTicks >= SCREEN_TICKS_PER_FRAME*50) {
       board.flash();
-      std::cout << "FLASH!\n";
       animTimer.stop();
       animTimer.start();
     }
@@ -68,7 +62,7 @@ int main(int argc, char* args[]) {
 
     int capTicks = capTimer.getTicks();
     if (capTicks < SCREEN_TICKS_PER_FRAME ) {
-        SDL_Delay(SCREEN_TICKS_PER_FRAME - capTicks);
+        // SDL_Delay(SCREEN_TICKS_PER_FRAME - capTicks);
     }
     capTimer.stop();
   }

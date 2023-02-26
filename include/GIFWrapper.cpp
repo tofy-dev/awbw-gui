@@ -49,15 +49,36 @@ GIFImage::GIFImage(std::string path) {
     frame->height_ = img->ImageDesc.Height;
 
     // TODO: transparency
-    int total_pixels = frame->width_ * frame->height_;
+    Uint8 disposal_method;
+    bool is_transparent;
+    for(int b = 0; b < img->ExtensionBlockCount; b++) {
+      if(img->ExtensionBlocks[b].Function == GRAPHICS_EXT_FUNC_CODE) {
+        Uint8 block[4];
+        memcpy(block, img->ExtensionBlocks[b].Bytes, 4);
+      
+        // Check for transparency
+        if (block[0] & 0x01)
+          is_transparent = true;
+        
+        // Disposal mode
+        disposal_method = block[0] >> 2 << 2;
+      }
+    }
     frame->surface_ = createSurface(frame->width_, frame->height_);
     
     SDL_Color* color_src = (local_colors == NULL) ? global_colors : local_colors;
+    int total_pixels = frame->width_ * frame->height_;
+
     for (int p = 0; p < total_pixels; p++) {
       SDL_Color c = color_src[img->RasterBits[p]];
-      std::cout << (int)c.r << " " << (int)c.g << " " << (int)c.b << " " << (int)c.a << '\n';
-      setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
+      // if (is_transparent) c.a = 0;
+      if (f > 0 && (disposal_method & 0x08) != 0x08) {
+        setPixel(frames_[f-1]->surface_, frame->surface_, p%frame->width_, p/frame->width_);
+      } else {
+        setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
+      }
     }
+    
 
     free(local_colors);
   }
@@ -70,11 +91,13 @@ SDL_Surface* GIFImage::createSurface(int width, int height) {
 }
 
 void GIFImage::setPixel(SDL_Surface* surface, int x, int y, Uint32 color) {
-  SDL_Rect rect;
-  rect.x = x; rect.y = y;
-  rect.w = 1; rect.h = 1;
-
+  SDL_Rect rect; rect.x = x; rect.y = y; rect.w = 1; rect.h = 1;
   SDL_FillRect(surface, &rect, color);
+}
+
+void GIFImage::setPixel(SDL_Surface* src, SDL_Surface* dst, int x, int y) {
+  SDL_Rect rect; rect.x = x; rect.y = y; rect.w = 1; rect.h = 1;
+  SDL_BlitSurface(src, &rect, dst, &rect);
 }
 
 void GIFImage::setFrameNumber(int frame_num) {

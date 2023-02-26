@@ -42,7 +42,7 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
       addUnit("os", "mech", x/SIZE, y/SIZE);
       break;
     case SDL_BUTTON_RIGHT:
-      addUnit("bm", "mech", x/SIZE, y/SIZE);
+      addUnit("bh", "mech", x/SIZE, y/SIZE);
       break;
   }
   grid_[y/SIZE][x/SIZE]->onClick();
@@ -75,9 +75,9 @@ void Board::flash() {
       GIFImage* gif = grid_[r][c]->getGIF();
       gif->setFrameNumber((gif->getFrameNumber() + 1) % gif->getTotalFrames());
       if (grid_[r][c]->getUnit() != nullptr) {
-        std::cout << "FLASHED UNIT!\n";
         GIFImage* gif2 = grid_[r][c]->getUnit()->getGIF();
         gif2->setFrameNumber((gif2->getFrameNumber() + 1) % gif2->getTotalFrames());
+        std::cout << gif2->getFrameNumber() << '\n';
       }
     }
   }
