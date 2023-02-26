@@ -30,10 +30,10 @@ GIFImage::GIFImage(std::string path) {
     std::cout << "Creates palettes\n";
 
     // Do frames
-    num_frames_ = file_->ImageCount;
-    frames_ = std::vector<GIFFrame*>(num_frames_);
-    std::cout << "Creates " << num_frames_ << " frames\n";
-    for (int i = 0; i < num_frames_; i++) {
+    total_frames_ = file_->ImageCount;
+    frames_ = std::vector<GIFFrame*>(total_frames_);
+    std::cout << "Creates " << total_frames_ << " frames\n";
+    for (int i = 0; i < total_frames_; i++) {
       std::cout << i << "\n";
       SavedImage* img = &file_->SavedImages[i];
       GIFFrame* frame = (GIFFrame*)SDL_malloc(sizeof(GIFFrame));
@@ -83,7 +83,7 @@ GIFImage::GIFImage(std::string path) {
           SDL_Color c = temp_pal->colors[img->RasterBits[j]];
           if (frame->trans_idx_ == img->RasterBits[j])
             c.a = 0;
-          set_pixel(frame->getSurface(), j%frame->width_, j/frame->width_, SDL_MapRGBA(frame->getSurface()->format, c.r, c.g, c.b, c.a));
+          setPixel(frame->getSurface(), j%frame->width_, j/frame->width_, SDL_MapRGBA(frame->getSurface()->format, c.r, c.g, c.b, c.a));
         }
       }
       std::cout << "Checkpoint F\n";
@@ -92,6 +92,18 @@ GIFImage::GIFImage(std::string path) {
     DGifCloseFile(file_, &error_);
   }
   std::cout << "done!\n";
+}
+
+void GIFImage::setFrameNumber(int frame_num) {
+  frame_num_ = frame_num;
+}
+
+int GIFImage::getFrameNumber() {
+  return frame_num_;
+}
+
+GIFFrame* GIFImage::getFrame() {
+  return frames_[frame_num_];
 }
 
 void GIFImage::createPalette(SDL_Palette* palette, ColorMapObject* map) {
@@ -111,7 +123,7 @@ SDL_Surface* GIFImage::createSurface(int width, int height)
         return SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 }
 
-void GIFImage::set_pixel(SDL_Surface* surface, int x, int y, Uint32 color)
+void GIFImage::setPixel(SDL_Surface* surface, int x, int y, Uint32 color)
 {
     int bpp = surface->format->BytesPerPixel;
     Uint8* bits = ((Uint8 *)surface->pixels) + y*surface->pitch + x*bpp;

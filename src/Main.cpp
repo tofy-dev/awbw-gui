@@ -24,6 +24,9 @@ int main(int argc, char* args[]) {
 
   RenderWindow window("awbw gui", 1280, 720);
   GIFImage foo("res/assets/units/jsb-copter.gif");
+  foo.setFrameNumber(0);
+  SDL_Rect a, b;
+  window.render(window.loadTexture(&foo), a, b);
 
   Board board("res/inputs/stalingrad.txt", &window);
   board.renderBoard();

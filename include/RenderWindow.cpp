@@ -1,4 +1,5 @@
 #include "RenderWindow.hpp"
+#include "GIFWrapper.hpp"
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_render.h>
@@ -22,6 +23,10 @@ SDL_Texture* RenderWindow::loadTexture(const char* p_filePath) {
     std::cout << "Failed to load texture with error: " << SDL_GetError() << '\n';
 
   return texture;
+}
+
+SDL_Texture* RenderWindow::loadTexture(GIFImage* img) {
+  return SDL_CreateTextureFromSurface(renderer_, img->getFrame()->getSurface());
 }
 
 void RenderWindow::clear() {

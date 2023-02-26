@@ -31,14 +31,20 @@ class GIFImage {
 #include "GIFWrapper.hpp"
 public:
   GIFImage(std::string path);
+  void setFrameNumber(int frame_num);
+  int getFrameNumber();
+  GIFFrame* getFrame();
+
   static void createPalette(SDL_Palette* palette, ColorMapObject* map);
-  SDL_Surface* createSurface(int width, int height);
-  void set_pixel(SDL_Surface* surface, int x, int y, Uint32 color);
+  static SDL_Surface* createSurface(int width, int height);
+  static void setPixel(SDL_Surface* surface, int x, int y, Uint32 color);
 
 private:
   int width_, height_;
-  int num_frames_;
+  int total_frames_;
+
   std::vector<GIFFrame*> frames_;
+  int frame_num_;
 
   SDL_Palette* global_palette_;
   GifFileType* file_;
