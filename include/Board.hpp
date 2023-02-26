@@ -14,6 +14,7 @@ public:
   void renderBoard();
   void addUnit(std::string country, std::string name, int x, int y);
   void wipeUnits();
+  void flash();
 
 private:
   // note: coordinates in AWBW are x by y, top-left origin, 0 indexed

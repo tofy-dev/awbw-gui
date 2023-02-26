@@ -17,9 +17,11 @@ private:
 class GIFImage {
 #include "GIFWrapper.hpp"
 public:
+  GIFImage();
   GIFImage(std::string path);
   void setFrameNumber(int frame_num);
   int getFrameNumber();
+  int getTotalFrames();
   GIFFrame* getFrame();
 
   static SDL_Surface* createSurface(int width, int height);

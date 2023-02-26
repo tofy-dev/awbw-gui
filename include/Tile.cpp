@@ -3,15 +3,14 @@
 #include <algorithm>
 #include <memory>
 #include <iostream>
+#include "GIFWrapper.hpp"
 #include "Tile.hpp"
 #include "RenderWindow.hpp"
 
 #define DNE std::string::npos
 
 // tile ============================================================================================
-Tile::Tile(int id, RenderWindow* window) : id_{id}, window_(window) {
-  texture_ = window->loadTexture(("res/assets/tiles/" + getName(id) + ".gif").c_str());
-}
+Tile::Tile(int id, RenderWindow* window) : id_{id}, window_(window) { }
 
 std::unique_ptr<Tile> Tile::createTile(int id, RenderWindow* window) {
   std::string name = Tile::getName(id);
@@ -34,12 +33,24 @@ std::unique_ptr<Tile> Tile::createTile(int id, RenderWindow* window) {
     ptr = std::make_unique<Mountain>(id, window);
   else
     ptr = std::make_unique<Terrain>(id, window);
+  ptr->setGIF("res/assets/tiles/" + getName(id) + ".gif");
+  ptr->getGIF()->setFrameNumber(0);
   return ptr;
 }
 
-std::array<int, 2> Tile::getDims(int basic) {
-  return {basic, basic*h_mult_/16};
+int Tile::getId() { return id_; }
+Unit* Tile::getUnit() { return unit_; }
+std::array<int, 2> Tile::getDims(int basic) { return {basic, basic*h_mult_/16}; }
+GIFImage* Tile::getGIF() { return &gif_; }
+SDL_Texture* Tile::getTexture() { return window_->loadTexture(getGIF()); }
+
+void Tile::setUnit(Unit* unit) {
+  if (unit_ != nullptr) SDL_free(unit_);
+  unit_ = unit;
 }
+void Tile::setGIF(std::string path) { gif_ = GIFImage(path); }
+
+// static functions
 std::string Tile::getName(int id) {
   std::string name = terrain_list_[id];
   name.erase(std::remove_if(name.begin(), name.end(), [](unsigned char x) { return std::isspace(x); }), name.end());
@@ -47,21 +58,6 @@ std::string Tile::getName(int id) {
     name[i] = tolower(name[i]);
   }
   return name;
-}
-int Tile::getId() {
-  return id_;
-}
-void Tile::setUnit(Unit* unit) {
-  if (unit_ != nullptr) {
-    SDL_free(unit_);
-  }
-  unit_ = unit;
-}
-Unit* Tile::getUnit() {
-  return unit_;
-}
-SDL_Texture* Tile::getTexture() {
-  return texture_;
 }
 // tile ============================================================================================
 

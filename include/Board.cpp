@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "Board.hpp"
+#include "GIFWrapper.hpp"
 #include "Tile.hpp"
 #include "RenderWindow.hpp"
 
@@ -62,6 +63,21 @@ void Board::renderBoard() {
         dst.x = SIZE*c; dst.y = SIZE*r; dst.w = SIZE; dst.h = SIZE;
 
         window_->render(grid_[r][c]->getUnit()->getTexture(), src, dst);
+      }
+    }
+  }
+}
+
+// TODO: bad naming, temp
+void Board::flash() {
+  for (int r = 0; r < rows_; r++) {
+    for (int c = 0; c < cols_; c++) {
+      GIFImage* gif = grid_[r][c]->getGIF();
+      gif->setFrameNumber((gif->getFrameNumber() + 1) % gif->getTotalFrames());
+      if (grid_[r][c]->getUnit() != nullptr) {
+        std::cout << "FLASHED UNIT!\n";
+        GIFImage* gif2 = grid_[r][c]->getUnit()->getGIF();
+        gif2->setFrameNumber((gif2->getFrameNumber() + 1) % gif2->getTotalFrames());
       }
     }
   }

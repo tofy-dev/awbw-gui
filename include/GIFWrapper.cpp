@@ -13,6 +13,8 @@
 #include <string>
 #include <cassert>
 
+// TOOD: clean code (this only exists because Tile.cpp complains about not constructing)
+GIFImage::GIFImage() {};
 GIFImage::GIFImage(std::string path) {
   GifFileType* gif;
   int error = -1;
@@ -27,6 +29,9 @@ GIFImage::GIFImage(std::string path) {
     global_colors[i].a = 255;
   }
   assert(global_colors != NULL);
+
+  total_frames_ = gif->ImageCount;
+  frame_num_ = 0;
 
   frames_ = std::vector<GIFFrame*>(gif->ImageCount);
   for (int f = 0; f < gif->ImageCount; f++) {
@@ -78,6 +83,10 @@ void GIFImage::setFrameNumber(int frame_num) {
 
 int GIFImage::getFrameNumber() {
   return frame_num_;
+}
+
+int GIFImage::getTotalFrames() {
+  return total_frames_;
 }
 
 GIFFrame* GIFImage::getFrame() {
