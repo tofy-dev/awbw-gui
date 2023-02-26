@@ -34,12 +34,7 @@ int main(int argc, char* args[]) {
   int frame = 0;
   SDL_Event event;
 
-  LTimer fpsTimer;
   LTimer capTimer;
-
-  int countedFrames = 0;
-  fpsTimer.start();
-
   while (running) {
     capTimer.start(); 
     while (SDL_PollEvent(&event)) {
@@ -47,16 +42,17 @@ int main(int argc, char* args[]) {
         running = false;
       if (event.type == SDL_MOUSEBUTTONDOWN) {
         board.handleClick(&event.button);
-        board.renderBoard();
-        window.display();
       }
     }
 
-    ++countedFrames;
-    int frameTicks = capTimer.getTicks();
-    if( frameTicks < SCREEN_TICKS_PER_FRAME ) {
-        SDL_Delay( SCREEN_TICKS_PER_FRAME - frameTicks );
+    board.renderBoard();
+    window.display();
+
+    int capTicks = capTimer.getTicks();
+    if (capTicks < SCREEN_TICKS_PER_FRAME ) {
+        SDL_Delay(SCREEN_TICKS_PER_FRAME - capTicks);
     }
+    capTimer.stop();
   }
 
   SDL_Quit();
