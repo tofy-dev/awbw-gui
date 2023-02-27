@@ -1,21 +1,13 @@
 #include "Unit.hpp"
 #include "GIFWrapper.hpp"
 #include "RenderWindow.hpp"
-#include <cstdlib>
 #include <string>
 
+Unit::Unit(std::string country, std::string name, RenderWindow* window) :
+  country_{country}, name_{name}, window_{window}, gif_{GIFImage("res/assets/units/" + country + name + ".gif", window)} {};
+
 Unit* Unit::createUnit(std::string country, std::string name, RenderWindow* window) {
-  Unit* unit = (Unit*)SDL_malloc(sizeof(Unit));
-  memset(unit, 0, sizeof(Unit));
-
-  unit->unit_ = unit;
-  unit->name_ = name;
-  unit->country_ = country;
-  unit->window_ = window;
-
-  unit->setGIF("res/assets/units/" + country + name + ".gif");
-  unit->getGIF()->setFrameNumber(0);
-
+  Unit* unit = new Unit(country, name, window);
   return unit;
 }
 

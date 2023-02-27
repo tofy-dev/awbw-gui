@@ -21,6 +21,7 @@ GIFImage::~GIFImage() {
     SDL_FreeSurface(frame->surface_);
     SDL_DestroyTexture(frame->texture_);
   }
+  std::cout << "deallocate gif" << '\n';
 }
 
 GIFImage::GIFImage(std::string path, RenderWindow* window) {

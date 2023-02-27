@@ -17,7 +17,7 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
   std::string line;
 
   while (std::getline(std::cin, line)) {
-    std::vector<std::unique_ptr<Tile>> row;
+    std::vector<Tile*> row;
     int s = 0;
     for (int i = 0; i <= line.size(); i++) {
       if (i == line.size() || line.at(i) == ',') {
@@ -27,7 +27,7 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
         if (rows_ == 0) cols_++;
       }
     }
-    grid_.push_back(std::move(row));
+    grid_.push_back(row);
     rows_++;
   }
 
@@ -57,7 +57,7 @@ void Board::renderBoard() {
       SDL_Rect src; src.x = 0; src.y = 0; src.w = width; src.h = height;
       SDL_Rect dst; dst.x = SIZE*c; dst.y = SIZE*r-(height-SIZE); dst.w = width; dst.h = height;
 
-      window_->render(grid_[r][c]->getTexture(), src, dst);
+      window_->render(grid_[r][c]->getGIF()->getTexture(), src, dst);
       if (grid_[r][c]->getUnit() != nullptr) {
         src.x = 0; src.y = 0; src.w = SIZE; src.h = SIZE;
         dst.x = SIZE*c; dst.y = SIZE*r; dst.w = SIZE; dst.h = SIZE;

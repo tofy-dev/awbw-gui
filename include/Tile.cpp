@@ -1,7 +1,7 @@
 #pragma once
+#include <cstdlib>
 #include <string>
 #include <algorithm>
-#include <memory>
 #include <iostream>
 #include "GIFWrapper.hpp"
 #include "Tile.hpp"
@@ -10,32 +10,33 @@
 #define DNE std::string::npos
 
 // tile ============================================================================================
-Tile::Tile(int id, RenderWindow* window) : id_{id}, window_(window) { }
+Tile::Tile(int id, RenderWindow* window) : 
+  id_{id}, window_(window), gif_{GIFImage("res/assets/tiles/" + getName(id) + ".gif", window)} {};
 
-std::unique_ptr<Tile> Tile::createTile(int id, RenderWindow* window) {
+Tile* Tile::createTile(int id, RenderWindow* window) {
   std::string name = Tile::getName(id);
-  std::unique_ptr<Tile> ptr;
+  std::string path = "res/assets/tiles/" + name + ".gif";
+
+  Tile* tile;
   if (name.find("city") != DNE)
-    ptr = std::make_unique<City>(id, window);
+    tile = (new City(id, window));
   else if (name.find("base") != DNE)
-    ptr = std::make_unique<Base>(id, window);
+    tile = (new Base(id, window));
   else if (name.find("airport") != DNE)
-    ptr = std::make_unique<Airport>(id, window);
+    tile = (new Airport(id, window));
   else if (name.find("port") != DNE)
-    ptr = std::make_unique<Port>(id, window);
+    tile = (new Port(id, window));
   else if (name.find("hq") != DNE)
-    ptr = std::make_unique<HQ>(id, window);
+    tile = (new HQ(id, window));
   else if (name.find("lab") != DNE)
-    ptr = std::make_unique<Lab>(id, window);
+    tile = (new Lab(id, window));
   else if (name.find("comtower") != DNE)
-    ptr = std::make_unique<ComTower>(id, window);
+    tile = (new ComTower(id, window));
   else if (name.find("mountain") != DNE)
-    ptr = std::make_unique<Mountain>(id, window);
+    tile = (new Mountain(id, window));
   else
-    ptr = std::make_unique<Terrain>(id, window);
-  ptr->setGIF("res/assets/tiles/" + getName(id) + ".gif");
-  ptr->getGIF()->setFrameNumber(0);
-  return ptr;
+    tile = (new Terrain(id, window));
+  return tile;
 }
 
 int Tile::getId() { return id_; }

@@ -9,6 +9,7 @@
 
 class Unit {
 public:
+  Unit(std::string country, std::string name, RenderWindow* window);
   static Unit* createUnit(std::string country, std::string name, RenderWindow* window);
 
   std::string getName();
@@ -20,7 +21,6 @@ public:
   void setGIF(std::string path);
 
 private:
-  Unit* unit_;
   std::string name_;
   std::string country_;
 
