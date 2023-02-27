@@ -62,7 +62,7 @@ int main(int argc, char* args[]) {
 
     int capTicks = capTimer.getTicks();
     if (capTicks < SCREEN_TICKS_PER_FRAME ) {
-        // SDL_Delay(SCREEN_TICKS_PER_FRAME - capTicks);
+        SDL_Delay(SCREEN_TICKS_PER_FRAME - capTicks);
     }
     capTimer.stop();
   }

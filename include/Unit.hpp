@@ -13,7 +13,6 @@ public:
 
   std::string getName();
   std::string getCountry();
-  SDL_Texture* getTexture();
   GIFImage* getGIF();
 
   void setName(std::string name);

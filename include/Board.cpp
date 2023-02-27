@@ -62,7 +62,7 @@ void Board::renderBoard() {
         src.x = 0; src.y = 0; src.w = SIZE; src.h = SIZE;
         dst.x = SIZE*c; dst.y = SIZE*r; dst.w = SIZE; dst.h = SIZE;
 
-        window_->render(grid_[r][c]->getUnit()->getTexture(), src, dst);
+        window_->render(grid_[r][c]->getUnit()->getGIF()->getTexture(), src, dst);
       }
     }
   }

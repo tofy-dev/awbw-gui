@@ -1,14 +1,16 @@
 #pragma once
+#include "RenderWindow.hpp"
 #include <gif_lib.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_pixels.h>
+#include <SDL2/SDL_render.h>
 #include <string>
 #include <vector>
 
 class GIFFrame {
 public:
   int width_, height_;
-  SDL_Palette* palette_;
+  SDL_Texture* texture_;
   SDL_Surface* surface_;
 
 private:
@@ -17,10 +19,11 @@ private:
 class GIFImage {
 #include "GIFWrapper.hpp"
 public:
-  GIFImage();
-  GIFImage(std::string path);
+  ~GIFImage();
+  GIFImage(std::string path, RenderWindow* window);
   void setFrameNumber(int frame_num);
   int getFrameNumber();
+  SDL_Texture* getTexture();
   int getTotalFrames();
   GIFFrame* getFrame();
 

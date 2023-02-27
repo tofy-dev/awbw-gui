@@ -42,13 +42,12 @@ int Tile::getId() { return id_; }
 Unit* Tile::getUnit() { return unit_; }
 std::array<int, 2> Tile::getDims(int basic) { return {basic, basic*h_mult_/16}; }
 GIFImage* Tile::getGIF() { return &gif_; }
-SDL_Texture* Tile::getTexture() { return window_->loadTexture(getGIF()); }
 
 void Tile::setUnit(Unit* unit) {
   if (unit_ != nullptr) SDL_free(unit_);
   unit_ = unit;
 }
-void Tile::setGIF(std::string path) { gif_ = GIFImage(path); }
+void Tile::setGIF(std::string path) { gif_ = GIFImage{path, window_}; }
 
 // static functions
 std::string Tile::getName(int id) {

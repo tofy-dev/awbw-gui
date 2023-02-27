@@ -1,5 +1,5 @@
 #include "RenderWindow.hpp"
-#include "GIFWrapper.hpp"
+#include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_render.h>
@@ -24,8 +24,8 @@ SDL_Texture* RenderWindow::loadTexture(const char* p_filePath) {
   return texture;
 }
 
-SDL_Texture* RenderWindow::loadTexture(GIFImage* img) {
-  return SDL_CreateTextureFromSurface(renderer_, img->getFrame()->surface_);
+SDL_Texture* RenderWindow::loadTexture(SDL_Surface* p_surface) {
+  return SDL_CreateTextureFromSurface(renderer_, p_surface);
 }
 
 void RenderWindow::clear() {
@@ -42,5 +42,6 @@ void RenderWindow::display() {
 
 RenderWindow::~RenderWindow() {
   SDL_DestroyWindow(window_);
+  SDL_DestroyRenderer(renderer_);
   std::cout << "Window destroyed.\n";
 }

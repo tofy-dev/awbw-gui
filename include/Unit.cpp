@@ -21,9 +21,8 @@ Unit* Unit::createUnit(std::string country, std::string name, RenderWindow* wind
 
 std::string Unit::getName() { return name_; }
 std::string Unit::getCountry() { return name_; }
-SDL_Texture* Unit::getTexture() { return window_->loadTexture(getGIF()); }
 GIFImage* Unit::getGIF() { return &gif_; }
 
 void Unit::setName(std::string name) { name_ = name; }
 void Unit::setCountry(std::string country) { country_ = country; }
-void Unit::setGIF(std::string path) { gif_ = GIFImage(path); }
+void Unit::setGIF(std::string path) { gif_ = GIFImage(path, window_); }

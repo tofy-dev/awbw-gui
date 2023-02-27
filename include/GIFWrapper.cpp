@@ -1,9 +1,11 @@
 /*
- * Copied from https://github.com/grimfang4/SDL_gifwrap
+ * Poopy implementation of https://github.com/grimfang4/SDL_gifwrap
  */
 
 #pragma once
 #include "GIFWrapper.hpp"
+#include "RenderWindow.hpp"
+#include <SDL2/SDL_render.h>
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_surface.h>
@@ -13,9 +15,15 @@
 #include <string>
 #include <cassert>
 
-// TOOD: clean code (this only exists because Tile.cpp complains about not constructing)
-GIFImage::GIFImage() {};
-GIFImage::GIFImage(std::string path) {
+GIFImage::~GIFImage() {
+  for (int f = 0; f < total_frames_; f++) {
+    GIFFrame* frame = frames_[f];
+    SDL_FreeSurface(frame->surface_);
+    SDL_DestroyTexture(frame->texture_);
+  }
+}
+
+GIFImage::GIFImage(std::string path, RenderWindow* window) {
   GifFileType* gif;
   int error = -1;
   gif = DGifOpenFileName(path.c_str(), &error);
@@ -78,8 +86,8 @@ GIFImage::GIFImage(std::string path) {
         setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
       }
     }
-    
 
+    frame->texture_ = window->loadTexture(frame->surface_);
     free(local_colors);
   }
   free(global_colors);
@@ -112,6 +120,6 @@ int GIFImage::getTotalFrames() {
   return total_frames_;
 }
 
-GIFFrame* GIFImage::getFrame() {
-  return frames_[frame_num_];
+SDL_Texture* GIFImage::getTexture() {
+  return frames_[frame_num_]->texture_;
 }
