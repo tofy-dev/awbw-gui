@@ -42,28 +42,33 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
   if (y >= rows_*SCALE || x >= cols_*SCALE) return;
   switch (event->button) {
     case SDL_BUTTON_LEFT:
-      addUnit("os", "tank", x/SCALE, y/SCALE);
+      addUnit("os", "mech", x/SCALE, y/SCALE);
       break;
     case SDL_BUTTON_RIGHT:
-      addUnit("bh", "tank", x/SCALE, y/SCALE);
+      addUnit("bh", "mech", x/SCALE, y/SCALE);
       break;
   }
   grid_[y/SCALE][x/SCALE]->onClick();
 }
 
 void Board::renderBoard() {
+  SDL_Rect dst;
+  Tile* tile;
   for (int r = 0; r < rows_; r++) {
     for (int c = 0; c < cols_; c++) {
-      int w = grid_[r][c]->getGIF()->getWidth();
-      int h = grid_[r][c]->getGIF()->getHeight();
-      std::cout << grid_[r][c]->getName(grid_[r][c]->getId()) << " " << w << " " << h << "\n";
+      tile = grid_[r][c];
+      int w = tile->getGIF()->getWidth();
+      int h = tile->getGIF()->getHeight();
 
-      SDL_Rect dst; dst.x = w*c; dst.y = w*r-(h-w); dst.w = w; dst.h = h;
-      std::cout << dst.x << " " << dst.y << '\n';
-      window_->render(grid_[r][c]->getGIF()->getTexture(), dst);
+      dst.x = w*c; dst.y = w*r-(h-w);
+      dst.w = w; dst.h = h;
 
-      if (grid_[r][c]->getUnit() != nullptr) {
-        dst.x = w*c; dst.y = w*r; dst.w = w; dst.h = w;
+      window_->render(tile->getGIF()->getTexture(), dst);
+
+      if (tile->getUnit() != nullptr) {
+        dst.x = w*c; dst.y = w*r;
+        dst.w = tile->getGIF()->getWidth(); dst.h = tile->getGIF()->getHeight();
+        // std::cout << dst.w << " " << dst.h << '\n';
 
         window_->render(grid_[r][c]->getUnit()->getGIF()->getTexture(), dst);
       }

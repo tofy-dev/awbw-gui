@@ -79,6 +79,7 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
     SDL_Color* color_src = (local_colors == NULL) ? global_colors : local_colors;
     int total_pixels = frame->width_ * frame->height_;
 
+    if (f > 0) std::cout << (int)frames_[f-1]->disposal_method_ << '\n';
     for (int p = 0; p < total_pixels; p++) {
       SDL_Color c = color_src[img->RasterBits[p]];
       // TODO: still doesnt work
@@ -87,12 +88,11 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
       }
 
       if (f > 0) {
-        if (frames_[f-1]->disposal_method_ != GIF_WIPE_SCREEN) {
+        if (frames_[f-1]->disposal_method_ != GIF_WIPE_SCREEN)
           setPixel(frames_[f-1]->surface_, frame->surface_, p%frame->width_, p/frame->width_);
-        }
         if (c.a != 0)
           setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
-      } else {
+      } else if (c.a != 0) {
         setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
       }
     }
@@ -125,7 +125,9 @@ int GIFImage::getHeight() { return getFrame()->height_; }
 
 // static functions
 SDL_Surface* GIFImage::createSurface(int width, int height) {
-  return SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
+  SDL_Surface* surface = SDL_CreateRGBSurface(0,width,height,32,0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+  SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE);
+  return surface;
 }
 void GIFImage::setPixel(SDL_Surface* surface, int x, int y, Uint32 color) {
   SDL_Rect rect; rect.x = x; rect.y = y; rect.w = 1; rect.h = 1;
