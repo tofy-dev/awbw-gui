@@ -10,9 +10,12 @@
 #include "Tile.hpp"
 #include "RenderWindow.hpp"
 
-#define SIZE 30
+#define SCALE 30
 
 Board::Board(std::string path, RenderWindow* window) : window_(window) {
+  Tile::setScaling(SCALE/16.f);
+  Unit::setScaling(SCALE/16.f);
+
   freopen(path.c_str(), "r", stdin);
   std::string line;
 
@@ -36,29 +39,31 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
 
 void Board::handleClick(SDL_MouseButtonEvent* event) {
   int x = event->x, y = event->y;
-  if (y >= rows_*SIZE || x >= cols_*SIZE) return;
+  if (y >= rows_*SCALE || x >= cols_*SCALE) return;
   switch (event->button) {
     case SDL_BUTTON_LEFT:
-      addUnit("os", "tank", x/SIZE, y/SIZE);
+      addUnit("os", "tank", x/SCALE, y/SCALE);
       break;
     case SDL_BUTTON_RIGHT:
-      addUnit("bh", "tank", x/SIZE, y/SIZE);
+      addUnit("bh", "tank", x/SCALE, y/SCALE);
       break;
   }
-  grid_[y/SIZE][x/SIZE]->onClick();
+  grid_[y/SCALE][x/SCALE]->onClick();
 }
 
 void Board::renderBoard() {
   for (int r = 0; r < rows_; r++) {
     for (int c = 0; c < cols_; c++) {
-      int width = grid_[r][c]->getDims(SIZE)[0];
-      int height = grid_[r][c]->getDims(SIZE)[1];
+      int w = grid_[r][c]->getGIF()->getWidth();
+      int h = grid_[r][c]->getGIF()->getHeight();
+      std::cout << grid_[r][c]->getName(grid_[r][c]->getId()) << " " << w << " " << h << "\n";
 
-      SDL_Rect dst; dst.x = SIZE*c; dst.y = SIZE*r-(height-SIZE); dst.w = width; dst.h = height;
-
+      SDL_Rect dst; dst.x = w*c; dst.y = w*r-(h-w); dst.w = w; dst.h = h;
+      std::cout << dst.x << " " << dst.y << '\n';
       window_->render(grid_[r][c]->getGIF()->getTexture(), dst);
+
       if (grid_[r][c]->getUnit() != nullptr) {
-        dst.x = SIZE*c; dst.y = SIZE*r; dst.w = SIZE; dst.h = SIZE;
+        dst.x = w*c; dst.y = w*r; dst.w = w; dst.h = w;
 
         window_->render(grid_[r][c]->getUnit()->getGIF()->getTexture(), dst);
       }

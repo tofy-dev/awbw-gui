@@ -41,9 +41,6 @@ Tile* Tile::createTile(int id, RenderWindow* window) {
 }
 
 Unit* Tile::getUnit() { return unit_; }
-std::array<int, 2> Tile::getDims(int basic) {
-  return {basic, basic*h_mult_/16};
-}
 void Tile::setUnit(Unit* unit) {
   if (unit_ != nullptr) SDL_free(unit_);
   unit_ = unit;
@@ -62,7 +59,7 @@ std::string Tile::getName(int id) {
     name[i] = tolower(name[i]);
   return name;
 }
-void Tile::setScaling(int scaling) { scaling_ = scaling; };
+void Tile::setScaling(double scaling) { scaling_ = scaling; };
 // tile ============================================================================================
 
 City::~City() {};

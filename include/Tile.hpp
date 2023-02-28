@@ -21,11 +21,10 @@ public:
 
   int getId();
   Unit* getUnit();
-  std::array<int, 2> getDims(int basic);
   GIFImage* getGIF();
 
   void setUnit(Unit* unit);
-  static void setScaling(int scaling);
+  static void setScaling(double scaling);
 
 protected:
   int id_;
