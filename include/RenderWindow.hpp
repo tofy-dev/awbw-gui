@@ -10,7 +10,7 @@ public:
   SDL_Texture* loadTexture(SDL_Surface* p_surface);
 
   void clear();
-  void render(SDL_Texture* p_tex, SDL_Rect p_src, SDL_Rect p_dst);
+  void render(SDL_Texture* p_tex, SDL_Rect p_dst);
   void display();
 
   ~RenderWindow();

@@ -11,7 +11,8 @@
 
 // tile ============================================================================================
 Tile::Tile(int id, RenderWindow* window) : 
-  id_{id}, window_(window), gif_{GIFImage("res/assets/tiles/" + getName(id) + ".gif", window)} {};
+  id_{id}, window_(window),
+  gif_{GIFImage("res/assets/tiles/" + getName(id) + ".gif", scaling_, window)} {};
 
 Tile* Tile::createTile(int id, RenderWindow* window) {
   std::string name = Tile::getName(id);
@@ -39,26 +40,29 @@ Tile* Tile::createTile(int id, RenderWindow* window) {
   return tile;
 }
 
-int Tile::getId() { return id_; }
 Unit* Tile::getUnit() { return unit_; }
-std::array<int, 2> Tile::getDims(int basic) { return {basic, basic*h_mult_/16}; }
-GIFImage* Tile::getGIF() { return &gif_; }
-
+std::array<int, 2> Tile::getDims(int basic) {
+  return {basic, basic*h_mult_/16};
+}
 void Tile::setUnit(Unit* unit) {
   if (unit_ != nullptr) SDL_free(unit_);
   unit_ = unit;
 }
-void Tile::setGIF(std::string path) { gif_ = GIFImage{path, window_}; }
+
+int Tile::getId() { return id_; }
+
+GIFImage* Tile::getGIF() { return &gif_; }
+
 
 // static functions
 std::string Tile::getName(int id) {
   std::string name = terrain_list_[id];
   name.erase(std::remove_if(name.begin(), name.end(), [](unsigned char x) { return std::isspace(x); }), name.end());
-  for (int i = 0; i < name.size(); i++) {
+  for (int i = 0; i < name.size(); i++)
     name[i] = tolower(name[i]);
-  }
   return name;
 }
+void Tile::setScaling(int scaling) { scaling_ = scaling; };
 // tile ============================================================================================
 
 City::~City() {};

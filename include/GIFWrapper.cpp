@@ -15,6 +15,8 @@
 #include <string>
 #include <cassert>
 
+#define GIF_WIPE_SCREEN 2
+
 GIFImage::~GIFImage() {
   for (int f = 0; f < total_frames_; f++) {
     GIFFrame* frame = frames_[f];
@@ -24,7 +26,7 @@ GIFImage::~GIFImage() {
   std::cout << "deallocate gif" << '\n';
 }
 
-GIFImage::GIFImage(std::string path, RenderWindow* window) {
+GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
   GifFileType* gif;
   int error = -1;
   gif = DGifOpenFileName(path.c_str(), &error);
@@ -58,19 +60,18 @@ GIFImage::GIFImage(std::string path, RenderWindow* window) {
     frame->height_ = img->ImageDesc.Height;
 
     // TODO: transparency
-    Uint8 disposal_method;
-    bool is_transparent;
+    int transparent_index;
     for(int b = 0; b < img->ExtensionBlockCount; b++) {
       if(img->ExtensionBlocks[b].Function == GRAPHICS_EXT_FUNC_CODE) {
         Uint8 block[4];
         memcpy(block, img->ExtensionBlocks[b].Bytes, 4);
       
         // Check for transparency
-        if (block[0] & 0x01)
-          is_transparent = true;
+        transparent_index = block[3];
         
         // Disposal mode
-        disposal_method = block[0] >> 2 << 2;
+        Uint8 disposal_method = block[0] >> 2;
+        frame->disposal_method_ = disposal_method;
       }
     }
     frame->surface_ = createSurface(frame->width_, frame->height_);
@@ -80,14 +81,25 @@ GIFImage::GIFImage(std::string path, RenderWindow* window) {
 
     for (int p = 0; p < total_pixels; p++) {
       SDL_Color c = color_src[img->RasterBits[p]];
-      // if (is_transparent) c.a = 0;
-      if (f > 0 && (disposal_method & 0x08) != 0x08) {
-        setPixel(frames_[f-1]->surface_, frame->surface_, p%frame->width_, p/frame->width_);
+      // TODO: still doesnt work
+      if (transparent_index == img->RasterBits[p]) {
+        c.a = 0;
+      }
+
+      if (f > 0) {
+        if (frames_[f-1]->disposal_method_ != GIF_WIPE_SCREEN) {
+          setPixel(frames_[f-1]->surface_, frame->surface_, p%frame->width_, p/frame->width_);
+        }
+        if (c.a != 0)
+          setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
       } else {
         setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
       }
     }
 
+    // updates the width + height to be scaled
+    frame->width_ = frame->width_*scale;
+    frame->height_ = frame->height_*scale;
     frame->texture_ = window->loadTexture(frame->surface_);
     free(local_colors);
   }
@@ -95,32 +107,31 @@ GIFImage::GIFImage(std::string path, RenderWindow* window) {
   DGifCloseFile(gif, &error);
 }
 
+void GIFImage::setFrameNumber(int frame_num) { frame_num_ = frame_num; }
+int GIFImage::getFrameNumber() { return frame_num_; }
+
+GIFFrame* GIFImage::getFrame() { return frames_[frame_num_]; }
+int GIFImage::getTotalFrames() { return total_frames_; }
+SDL_Texture* GIFImage::getTexture() { return frames_[frame_num_]->texture_; }
+SDL_Rect GIFImage::getDims() {
+  SDL_Rect r;
+  r.x = 0; r.y = 0;
+  r.w = getWidth(); r.h = getHeight();
+  return r;
+}
+
+int GIFImage::getWidth() { return getFrame()->width_; }
+int GIFImage::getHeight() { return getFrame()->height_; }
+
+// static functions
 SDL_Surface* GIFImage::createSurface(int width, int height) {
   return SDL_CreateRGBSurface(0,width,height,32,0,0,0,0);
 }
-
 void GIFImage::setPixel(SDL_Surface* surface, int x, int y, Uint32 color) {
   SDL_Rect rect; rect.x = x; rect.y = y; rect.w = 1; rect.h = 1;
   SDL_FillRect(surface, &rect, color);
 }
-
 void GIFImage::setPixel(SDL_Surface* src, SDL_Surface* dst, int x, int y) {
   SDL_Rect rect; rect.x = x; rect.y = y; rect.w = 1; rect.h = 1;
   SDL_BlitSurface(src, &rect, dst, &rect);
-}
-
-void GIFImage::setFrameNumber(int frame_num) {
-  frame_num_ = frame_num;
-}
-
-int GIFImage::getFrameNumber() {
-  return frame_num_;
-}
-
-int GIFImage::getTotalFrames() {
-  return total_frames_;
-}
-
-SDL_Texture* GIFImage::getTexture() {
-  return frames_[frame_num_]->texture_;
 }

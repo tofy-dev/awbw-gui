@@ -20,9 +20,12 @@ public:
   void setCountry(std::string country);
   void setGIF(std::string path);
 
+  static void setScaling(int scaling);
+
 private:
   std::string name_;
   std::string country_;
+  static inline double scaling_ = 1;
 
   GIFImage gif_;
   RenderWindow* window_;

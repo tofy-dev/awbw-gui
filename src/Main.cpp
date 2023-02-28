@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "SDL2/SDL_events.h"
+#include <SDL2/SDL_render.h>
 #include <iostream>
 
 #include "RenderWindow.hpp"
@@ -23,8 +24,36 @@ int main(int argc, char* args[]) {
   }
 
   RenderWindow window("awbw gui", 1280, 720);
-  SDL_Rect a; a.x = 0; a.y = 0; a.h = 100; a.w = 100;
+  Tile::setScaling(5);
+  Unit::setScaling(5);
 
+  Tile* plain = Tile::createTile(1, &window);
+  Tile* hq = Tile::createTile(95, &window);
+
+  SDL_Texture* pntex = plain->getGIF()->getTexture();
+  SDL_Texture* hqtex = hq->getGIF()->getTexture();
+
+  SDL_Rect a, b;
+  a.h = plain->getGIF()->getHeight(); a.w = plain->getGIF()->getWidth();
+  a.x = 0; a.y = 0;
+
+  b.h = plain->getGIF()->getHeight(); b.w = plain->getGIF()->getWidth();
+  b.x = 0; b.y = b.h-(b.h-a.h);
+  
+  window.render(pntex, plain->getGIF()->getDims());
+  window.render(hqtex, hq->getGIF()->getDims());
+
+  window.display();
+
+  bool running = true;
+  SDL_Event event;
+  while (running) {
+    while (SDL_PollEvent(&event)) {
+      if (event.type == SDL_QUIT)
+        running = false;
+    }
+  }
+  /*
   Board board("res/inputs/stalingrad.txt", &window);
   board.renderBoard();
   window.display();
@@ -66,7 +95,10 @@ int main(int argc, char* args[]) {
     }
     capTimer.stop();
   }
+  */
 
+  SDL_DestroyTexture(pntex);
+  SDL_DestroyTexture(hqtex);
   SDL_Quit();
 
   return 0;

@@ -10,6 +10,7 @@
 class GIFFrame {
 public:
   int width_, height_;
+  int disposal_method_;
   SDL_Texture* texture_;
   SDL_Surface* surface_;
 
@@ -20,12 +21,16 @@ class GIFImage {
 #include "GIFWrapper.hpp"
 public:
   ~GIFImage();
-  GIFImage(std::string path, RenderWindow* window);
+  GIFImage(std::string path, double scale, RenderWindow* window);
   void setFrameNumber(int frame_num);
   int getFrameNumber();
   SDL_Texture* getTexture();
+  SDL_Rect getDims();
   int getTotalFrames();
   GIFFrame* getFrame();
+
+  int getWidth();
+  int getHeight();
 
   static SDL_Surface* createSurface(int width, int height);
   static void setPixel(SDL_Surface* surface, int x, int y, Uint32 color);

@@ -32,8 +32,8 @@ void RenderWindow::clear() {
   SDL_RenderClear(renderer_);
 }
 
-void RenderWindow::render(SDL_Texture* p_tex, SDL_Rect p_src, SDL_Rect p_dst) {
-  SDL_RenderCopy(renderer_, p_tex, &p_src, &p_dst);
+void RenderWindow::render(SDL_Texture* p_tex, SDL_Rect p_dst) {
+  SDL_RenderCopy(renderer_, p_tex, NULL, &p_dst);
 }
 
 void RenderWindow::display() {

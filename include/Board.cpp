@@ -39,10 +39,10 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
   if (y >= rows_*SIZE || x >= cols_*SIZE) return;
   switch (event->button) {
     case SDL_BUTTON_LEFT:
-      addUnit("os", "mech", x/SIZE, y/SIZE);
+      addUnit("os", "tank", x/SIZE, y/SIZE);
       break;
     case SDL_BUTTON_RIGHT:
-      addUnit("bh", "mech", x/SIZE, y/SIZE);
+      addUnit("bh", "tank", x/SIZE, y/SIZE);
       break;
   }
   grid_[y/SIZE][x/SIZE]->onClick();
@@ -54,15 +54,13 @@ void Board::renderBoard() {
       int width = grid_[r][c]->getDims(SIZE)[0];
       int height = grid_[r][c]->getDims(SIZE)[1];
 
-      SDL_Rect src; src.x = 0; src.y = 0; src.w = width; src.h = height;
       SDL_Rect dst; dst.x = SIZE*c; dst.y = SIZE*r-(height-SIZE); dst.w = width; dst.h = height;
 
-      window_->render(grid_[r][c]->getGIF()->getTexture(), src, dst);
+      window_->render(grid_[r][c]->getGIF()->getTexture(), dst);
       if (grid_[r][c]->getUnit() != nullptr) {
-        src.x = 0; src.y = 0; src.w = SIZE; src.h = SIZE;
         dst.x = SIZE*c; dst.y = SIZE*r; dst.w = SIZE; dst.h = SIZE;
 
-        window_->render(grid_[r][c]->getUnit()->getGIF()->getTexture(), src, dst);
+        window_->render(grid_[r][c]->getUnit()->getGIF()->getTexture(), dst);
       }
     }
   }
