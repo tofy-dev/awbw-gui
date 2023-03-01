@@ -14,7 +14,8 @@
 #include <string>
 #include <cassert>
 
-#define GIF_WIPE_SCREEN 2
+#define GIF_OVERLAY 1
+#define GIF_WIPE 2
 
 GIFImage::~GIFImage() {
   for (int f = 0; f < total_frames_; f++) {
@@ -42,6 +43,8 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
 
   total_frames_ = gif->ImageCount;
   frame_num_ = 0;
+  max_w_ = gif->SWidth;
+  max_h_ = gif->SHeight;
 
   frames_ = std::vector<GIFFrame*>(gif->ImageCount);
   for (int f = 0; f < gif->ImageCount; f++) {
@@ -55,8 +58,6 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
     }
 
     frames_[f] = frame;
-    frame->width_ = img->ImageDesc.Width;
-    frame->height_ = img->ImageDesc.Height;
 
     int transparent_index;
     bool is_transparent;
@@ -74,37 +75,43 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
         frame->disposal_method_ = disposal_method;
       }
     }
-    frame->surface_ = createSurface(frame->width_, frame->height_);
+
+    frame->surface_ = createSurface(max_w_, max_h_);
+    frame->raw_w_ = img->ImageDesc.Width;
+    frame->raw_h_ = img->ImageDesc.Height;
+
+    // copy old surface if the disposal method is to overlay over
+    if (shouldOverlay(f)) {
+      std::cout << "copy entire surface\n";
+      SDL_BlitSurface(frames_[f-1]->surface_, NULL, frame->surface_, NULL);
+    }
     
     SDL_Color* color_src = (local_colors == NULL) ? global_colors : local_colors;
-    int total_pixels = frame->width_ * frame->height_;
+    int total_pixels = frame->raw_w_ * frame->raw_h_;
+    int left_off = img->ImageDesc.Left;
+    int top_off = img->ImageDesc.Top;
 
-    std::cout << is_transparent << "\n";
+    std::cout << left_off << " " << top_off << '\n';
     for (int p = 0; p < total_pixels; p++) {
       SDL_Color c = color_src[img->RasterBits[p]];
-      if (is_transparent && transparent_index == img->RasterBits[p]) {
-        c.a = 0;
-        std::cout << (int)transparent_index << '\n';
-      }
-
-      // copy last image if it shouldn't be wiped
-      if (f > 0 && frames_[f-1]->disposal_method_ != GIF_WIPE_SCREEN) {
-        setPixel(frames_[f-1]->surface_, frame->surface_, p%frame->width_, p/frame->width_);
-        if (!is_transparent)
-          setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
-      } else {
-        setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
-      }
+      c.a = (is_transparent && transparent_index == img->RasterBits[p]) ? 0 : 255;
+      if (c.a != 0)
+        setPixel(frame->surface_, left_off + p%frame->raw_w_, top_off + p/frame->raw_w_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
     }
 
-    // updates the width + height to be scaled
-    frame->width_ = frame->width_*scale;
-    frame->height_ = frame->height_*scale;
     frame->texture_ = window->loadTexture(frame->surface_);
     free(local_colors);
   }
+
   free(global_colors);
   DGifCloseFile(gif, &error);
+
+  max_w_ *= scale;
+  max_h_ *= scale;
+}
+
+bool GIFImage::shouldOverlay(int frame_num) {
+  return frame_num > 0 && frames_[frame_num-1]->disposal_method_ == GIF_OVERLAY;
 }
 
 void GIFImage::setFrameNumber(int frame_num) { frame_num_ = frame_num; }
@@ -120,8 +127,8 @@ SDL_Rect GIFImage::getDims() {
   return r;
 }
 
-int GIFImage::getWidth() { return getFrame()->width_; }
-int GIFImage::getHeight() { return getFrame()->height_; }
+int GIFImage::getWidth() { return max_w_; }
+int GIFImage::getHeight() { return max_h_; }
 
 // static functions
 SDL_Surface* GIFImage::createSurface(int width, int height) {
@@ -132,8 +139,4 @@ SDL_Surface* GIFImage::createSurface(int width, int height) {
 void GIFImage::setPixel(SDL_Surface* surface, int x, int y, Uint32 color) {
   SDL_Rect rect; rect.x = x; rect.y = y; rect.w = 1; rect.h = 1;
   SDL_FillRect(surface, &rect, color);
-}
-void GIFImage::setPixel(SDL_Surface* src, SDL_Surface* dst, int x, int y) {
-  SDL_Rect rect; rect.x = x; rect.y = y; rect.w = 1; rect.h = 1;
-  SDL_BlitSurface(src, &rect, dst, &rect);
 }

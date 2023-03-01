@@ -9,7 +9,8 @@
 
 class GIFFrame {
 public:
-  int width_, height_;
+  int raw_w_, raw_h_;
+
   int disposal_method_;
   SDL_Texture* texture_;
   SDL_Surface* surface_;
@@ -22,6 +23,9 @@ class GIFImage {
 public:
   ~GIFImage();
   GIFImage(std::string path, double scale, RenderWindow* window);
+
+  bool shouldOverlay(int frame_num);
+
   void setFrameNumber(int frame_num);
   int getFrameNumber();
   SDL_Texture* getTexture();
@@ -34,10 +38,9 @@ public:
 
   static SDL_Surface* createSurface(int width, int height);
   static void setPixel(SDL_Surface* surface, int x, int y, Uint32 color);
-  static void setPixel(SDL_Surface* surface, SDL_Surface* dst, int x, int y); 
 
 private:
-  int width_, height_;
+  int max_w_, max_h_;
   int total_frames_;
 
   std::vector<GIFFrame*> frames_;

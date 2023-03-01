@@ -10,7 +10,7 @@
 #include "Tile.hpp"
 #include "RenderWindow.hpp"
 
-#define SCALE 30
+#define SCALE 200
 
 Board::Board(std::string path, RenderWindow* window) : window_(window) {
   Tile::setScaling(SCALE/16.f);
@@ -42,10 +42,10 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
   if (y >= rows_*SCALE || x >= cols_*SCALE) return;
   switch (event->button) {
     case SDL_BUTTON_LEFT:
-      addUnit("os", "b-copter", x/SCALE, y/SCALE);
+      addUnit("os", "tank", x/SCALE, y/SCALE);
       break;
     case SDL_BUTTON_RIGHT:
-      addUnit("bh", "b-copter", x/SCALE, y/SCALE);
+      addUnit("bh", "tank", x/SCALE, y/SCALE);
       break;
   }
   grid_[y/SCALE][x/SCALE]->onClick();
@@ -54,6 +54,8 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
 void Board::renderBoard() {
   SDL_Rect dst;
   Tile* tile;
+  Unit* unit;
+
   for (int r = 0; r < rows_; r++) {
     for (int c = 0; c < cols_; c++) {
       tile = grid_[r][c];
@@ -65,9 +67,10 @@ void Board::renderBoard() {
 
       window_->render(tile->getGIF()->getTexture(), dst);
 
-      if (tile->getUnit() != nullptr) {
+      unit = tile->getUnit();
+      if (unit != nullptr) {
         dst.x = w*c; dst.y = w*r;
-        dst.w = SCALE; dst.h = SCALE;
+        dst.w = unit->getGIF()->getWidth(); dst.h = unit->getGIF()->getHeight();
 
         window_->render(tile->getUnit()->getGIF()->getTexture(), dst);
       }
@@ -84,7 +87,6 @@ void Board::flash() {
       if (grid_[r][c]->getUnit() != nullptr) {
         GIFImage* gif2 = grid_[r][c]->getUnit()->getGIF();
         gif2->setFrameNumber((gif2->getFrameNumber() + 1) % gif2->getTotalFrames());
-        std::cout << gif2->getFrameNumber() << '\n';
       }
     }
   }

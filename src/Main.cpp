@@ -25,7 +25,7 @@ int main(int argc, char* args[]) {
 
   RenderWindow window("awbw gui", 1280, 720);
 
-  Board board("res/inputs/stalingrad.txt", &window);
+  Board board("res/inputs/testing.txt", &window);
   board.renderBoard();
   window.display();
 
@@ -47,6 +47,10 @@ int main(int argc, char* args[]) {
       if (event.type == SDL_KEYDOWN) {
         if (event.key.keysym.sym == SDLK_BACKSPACE) {
           board.wipeUnits();
+        }
+        if (event.key.keysym.sym == SDLK_SPACE) {
+          if (animTimer.isPaused()) animTimer.start();
+          else animTimer.pause();
         }
       }
     }
