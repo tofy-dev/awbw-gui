@@ -9,7 +9,6 @@
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_surface.h>
-#include <vector>
 #include <gif_lib.h>
 #include <iostream>
 #include <string>
@@ -59,14 +58,15 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
     frame->width_ = img->ImageDesc.Width;
     frame->height_ = img->ImageDesc.Height;
 
-    // TODO: transparency
     int transparent_index;
+    bool is_transparent;
     for(int b = 0; b < img->ExtensionBlockCount; b++) {
       if(img->ExtensionBlocks[b].Function == GRAPHICS_EXT_FUNC_CODE) {
         Uint8 block[4];
         memcpy(block, img->ExtensionBlocks[b].Bytes, 4);
       
         // Check for transparency
+        is_transparent = ((uint8_t)(block[0] << 7) >> 7) == 0x01;
         transparent_index = block[3];
         
         // Disposal mode
@@ -79,20 +79,20 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
     SDL_Color* color_src = (local_colors == NULL) ? global_colors : local_colors;
     int total_pixels = frame->width_ * frame->height_;
 
-    if (f > 0) std::cout << (int)frames_[f-1]->disposal_method_ << '\n';
+    std::cout << is_transparent << "\n";
     for (int p = 0; p < total_pixels; p++) {
       SDL_Color c = color_src[img->RasterBits[p]];
-      // TODO: still doesnt work
-      if (transparent_index == img->RasterBits[p]) {
+      if (is_transparent && transparent_index == img->RasterBits[p]) {
         c.a = 0;
+        std::cout << (int)transparent_index << '\n';
       }
 
-      if (f > 0) {
-        if (frames_[f-1]->disposal_method_ != GIF_WIPE_SCREEN)
-          setPixel(frames_[f-1]->surface_, frame->surface_, p%frame->width_, p/frame->width_);
-        if (c.a != 0)
+      // copy last image if it shouldn't be wiped
+      if (f > 0 && frames_[f-1]->disposal_method_ != GIF_WIPE_SCREEN) {
+        setPixel(frames_[f-1]->surface_, frame->surface_, p%frame->width_, p/frame->width_);
+        if (!is_transparent)
           setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
-      } else if (c.a != 0) {
+      } else {
         setPixel(frame->surface_, p%frame->width_, p/frame->width_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
       }
     }
@@ -126,7 +126,7 @@ int GIFImage::getHeight() { return getFrame()->height_; }
 // static functions
 SDL_Surface* GIFImage::createSurface(int width, int height) {
   SDL_Surface* surface = SDL_CreateRGBSurface(0,width,height,32,0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-  SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE);
+  SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND);
   return surface;
 }
 void GIFImage::setPixel(SDL_Surface* surface, int x, int y, Uint32 color) {

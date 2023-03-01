@@ -20,4 +20,4 @@ void Unit::setName(std::string name) { name_ = name; }
 void Unit::setCountry(std::string country) { country_ = country; }
 void Unit::setGIF(std::string path) { gif_ = GIFImage(path, scaling_, window_); }
 
-void Unit::setScaling(int scaling) { scaling_ = scaling; };
+void Unit::setScaling(double scaling) { scaling_ = scaling; };

@@ -42,10 +42,10 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
   if (y >= rows_*SCALE || x >= cols_*SCALE) return;
   switch (event->button) {
     case SDL_BUTTON_LEFT:
-      addUnit("os", "mech", x/SCALE, y/SCALE);
+      addUnit("os", "b-copter", x/SCALE, y/SCALE);
       break;
     case SDL_BUTTON_RIGHT:
-      addUnit("bh", "mech", x/SCALE, y/SCALE);
+      addUnit("bh", "b-copter", x/SCALE, y/SCALE);
       break;
   }
   grid_[y/SCALE][x/SCALE]->onClick();
@@ -67,10 +67,9 @@ void Board::renderBoard() {
 
       if (tile->getUnit() != nullptr) {
         dst.x = w*c; dst.y = w*r;
-        dst.w = tile->getGIF()->getWidth(); dst.h = tile->getGIF()->getHeight();
-        // std::cout << dst.w << " " << dst.h << '\n';
+        dst.w = SCALE; dst.h = SCALE;
 
-        window_->render(grid_[r][c]->getUnit()->getGIF()->getTexture(), dst);
+        window_->render(tile->getUnit()->getGIF()->getTexture(), dst);
       }
     }
   }

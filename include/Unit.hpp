@@ -20,7 +20,7 @@ public:
   void setCountry(std::string country);
   void setGIF(std::string path);
 
-  static void setScaling(int scaling);
+  static void setScaling(double scaling);
 
 private:
   std::string name_;

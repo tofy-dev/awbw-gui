@@ -12,6 +12,7 @@ RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h) : window_(NULL
   }
 
   renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_ACCELERATED);
+  SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
 }
 
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath) {
