@@ -10,6 +10,7 @@
 #define DNE std::string::npos
 
 // tile ============================================================================================
+// constructors + static functions
 Tile::Tile(int id, RenderWindow* window) : 
   id_{id}, window_(window),
   gif_{GIFImage("res/assets/tiles/" + getName(id) + ".gif", scaling_, window)} {};
@@ -40,18 +41,6 @@ Tile* Tile::createTile(int id, RenderWindow* window) {
   return tile;
 }
 
-Unit* Tile::getUnit() { return unit_; }
-void Tile::setUnit(Unit* unit) {
-  if (unit_ != nullptr) SDL_free(unit_);
-  unit_ = unit;
-}
-
-int Tile::getId() { return id_; }
-
-GIFImage* Tile::getGIF() { return &gif_; }
-
-
-// static functions
 std::string Tile::getName(int id) {
   std::string name = terrain_list_[id];
   name.erase(std::remove_if(name.begin(), name.end(), [](unsigned char x) { return std::isspace(x); }), name.end());
@@ -59,50 +48,58 @@ std::string Tile::getName(int id) {
     name[i] = tolower(name[i]);
   return name;
 }
+
 void Tile::setScaling(double scaling) { scaling_ = scaling; };
+
+
+// getters
+Unit* Tile::getUnit() { return unit_; }
+
+int Tile::getId() { return id_; }
+
+GIFImage* Tile::getGIF() { return &gif_; }
+
+
+// setters
+void Tile::setUnit(Unit* unit) {
+  if (unit_ != nullptr)
+    Unit::destroyUnit(unit_);
+  unit_ = unit;
+}
 // tile ============================================================================================
 
-City::~City() {};
 void City::onClick() {
   std::cout << "city" << '\n';
 }
 
-Base::~Base() {};
 void Base::onClick() {
   std::cout << "base" << '\n';
 }
 
-Airport::~Airport() {};
 void Airport::onClick() {
   std::cout << "airport" << '\n';
 }
 
-Port::~Port() {};
 void Port::onClick() {
   std::cout << "port" << '\n';
 }
 
-HQ::~HQ() {};
 void HQ::onClick() {
   std::cout << "hq" << '\n';
 }
 
-Lab::~Lab() {};
 void Lab::onClick() {
   std::cout << "lab" << '\n';
 }
 
-ComTower::~ComTower() {};
 void ComTower::onClick() {
   std::cout << "comtower" << '\n';
 }
 
-Mountain::~Mountain() {};
 void Mountain::onClick() {
   std::cout << "mountain" << '\n';
 }
 
-Terrain::~Terrain() {};
 void Terrain::onClick() {
   std::cout << "terrain/" << getName(id_) << '\n';
 }

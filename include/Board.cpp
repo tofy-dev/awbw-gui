@@ -10,7 +10,7 @@
 #include "Tile.hpp"
 #include "RenderWindow.hpp"
 
-#define SCALE 200
+#define SCALE 30
 
 Board::Board(std::string path, RenderWindow* window) : window_(window) {
   Tile::setScaling(SCALE/16.f);
@@ -42,10 +42,10 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
   if (y >= rows_*SCALE || x >= cols_*SCALE) return;
   switch (event->button) {
     case SDL_BUTTON_LEFT:
-      addUnit("os", "tank", x/SCALE, y/SCALE);
+      addUnit("os", "mech", x/SCALE, y/SCALE);
       break;
     case SDL_BUTTON_RIGHT:
-      addUnit("bh", "tank", x/SCALE, y/SCALE);
+      addUnit("bh", "mech", x/SCALE, y/SCALE);
       break;
   }
   grid_[y/SCALE][x/SCALE]->onClick();

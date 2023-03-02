@@ -1,3 +1,4 @@
+#pragma once
 /*
  * Copied straight from https://lazyfoo.net/tutorials/SDL/23_advanced_timers/index.php
  */

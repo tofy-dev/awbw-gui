@@ -1,5 +1,5 @@
 /*
- * Poopy implementation of https://github.com/grimfang4/SDL_gifwrap
+ * Minimalist implementation of https://github.com/grimfang4/SDL_gifwrap
  */
 
 #pragma once
@@ -17,15 +17,7 @@
 #define GIF_OVERLAY 1
 #define GIF_WIPE 2
 
-GIFImage::~GIFImage() {
-  for (int f = 0; f < total_frames_; f++) {
-    GIFFrame* frame = frames_[f];
-    SDL_FreeSurface(frame->surface_);
-    SDL_DestroyTexture(frame->texture_);
-  }
-  std::cout << "deallocate gif" << '\n';
-}
-
+// constructors + static functions
 GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
   GifFileType* gif;
   int error = -1;
@@ -82,7 +74,6 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
 
     // copy old surface if the disposal method is to overlay over
     if (shouldOverlay(f)) {
-      std::cout << "copy entire surface\n";
       SDL_BlitSurface(frames_[f-1]->surface_, NULL, frame->surface_, NULL);
     }
     
@@ -91,7 +82,6 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
     int left_off = img->ImageDesc.Left;
     int top_off = img->ImageDesc.Top;
 
-    std::cout << left_off << " " << top_off << '\n';
     for (int p = 0; p < total_pixels; p++) {
       SDL_Color c = color_src[img->RasterBits[p]];
       c.a = (is_transparent && transparent_index == img->RasterBits[p]) ? 0 : 255;
@@ -110,16 +100,46 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
   max_h_ *= scale;
 }
 
+GIFImage* GIFImage::createGIF(std::string path, double scale, RenderWindow* window) {
+  GIFImage* image = new GIFImage(path, scale, window);
+  return image;
+}
+
+void GIFImage::destroyGIF(GIFImage* image) {
+  for (int f = 0; f < image->getTotalFrames(); f++) {
+    image->setFrameNumber(f);
+    SDL_DestroyTexture(image->getFrame()->texture_);
+    SDL_FreeSurface(image->getFrame()->surface_);
+
+  }
+  delete image;
+}
+
+SDL_Surface* GIFImage::createSurface(int width, int height) {
+  SDL_Surface* surface = SDL_CreateRGBSurface(0,width,height,32,0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+  SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND);
+  return surface;
+}
+
+void GIFImage::setPixel(SDL_Surface* surface, int x, int y, Uint32 color) {
+  SDL_Rect rect; rect.x = x; rect.y = y; rect.w = 1; rect.h = 1;
+  SDL_FillRect(surface, &rect, color);
+}
+
+
+// getters
 bool GIFImage::shouldOverlay(int frame_num) {
   return frame_num > 0 && frames_[frame_num-1]->disposal_method_ == GIF_OVERLAY;
 }
 
-void GIFImage::setFrameNumber(int frame_num) { frame_num_ = frame_num; }
 int GIFImage::getFrameNumber() { return frame_num_; }
 
 GIFFrame* GIFImage::getFrame() { return frames_[frame_num_]; }
+
 int GIFImage::getTotalFrames() { return total_frames_; }
+
 SDL_Texture* GIFImage::getTexture() { return frames_[frame_num_]->texture_; }
+
 SDL_Rect GIFImage::getDims() {
   SDL_Rect r;
   r.x = 0; r.y = 0;
@@ -130,13 +150,6 @@ SDL_Rect GIFImage::getDims() {
 int GIFImage::getWidth() { return max_w_; }
 int GIFImage::getHeight() { return max_h_; }
 
-// static functions
-SDL_Surface* GIFImage::createSurface(int width, int height) {
-  SDL_Surface* surface = SDL_CreateRGBSurface(0,width,height,32,0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-  SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_BLEND);
-  return surface;
-}
-void GIFImage::setPixel(SDL_Surface* surface, int x, int y, Uint32 color) {
-  SDL_Rect rect; rect.x = x; rect.y = y; rect.w = 1; rect.h = 1;
-  SDL_FillRect(surface, &rect, color);
-}
+
+// setters
+void GIFImage::setFrameNumber(int frame_num) { frame_num_ = frame_num; }

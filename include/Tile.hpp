@@ -13,10 +13,11 @@
 class Tile {
 public:
   Tile(int id, RenderWindow* window);
+
   static Tile* createTile(int id, RenderWindow* window);
   static std::string getName(int id);
+  static void setScaling(double scaling);
 
-  virtual ~Tile() = default;
   virtual void onClick() = 0;
 
   int getId();
@@ -24,7 +25,6 @@ public:
   GIFImage* getGIF();
 
   void setUnit(Unit* unit);
-  static void setScaling(double scaling);
 
 protected:
   int id_;
@@ -41,62 +41,53 @@ protected:
 class City : public Tile {
 public:
   City(int id, RenderWindow* window) : Tile(id, window) {h_mult_ = 22;};
-  ~City();
   void onClick() override;
 };
 
 class Base: public Tile {
 public:
   Base(int id, RenderWindow* window) : Tile(id, window) {h_mult_ = 25;};
-  ~Base();
   void onClick() override;
 };
 
 class Airport : public Tile {
 public:
   Airport(int id, RenderWindow* window) : Tile(id, window) {h_mult_ = 18;};
-  ~Airport();
   void onClick() override;
 };
 
 class Port : public Tile {
 public:
   Port(int id, RenderWindow* window) : Tile(id, window) {h_mult_ = 22;};
-  ~Port();
   void onClick() override;
 };
 
 class HQ : public Tile {
 public:
   HQ(int id, RenderWindow* window) : Tile(id, window) {h_mult_ = 31;};
-  ~HQ();
   void onClick() override;
 };
 
 class Lab : public Tile {
 public:
   Lab(int id, RenderWindow* window) : Tile(id, window) {h_mult_ = 24;};
-  ~Lab();
   void onClick() override;
 };
 
 class ComTower : public Tile {
 public:
   ComTower(int id, RenderWindow* window) : Tile(id, window) {h_mult_ = 25;};
-  ~ComTower();
   void onClick() override;
 };
 
 class Mountain: public Tile {
 public:
   Mountain(int id, RenderWindow* window) : Tile(id, window) {h_mult_ = 21;};
-  ~Mountain();
   void onClick() override;
 };
 
 class Terrain : public Tile {
 public:
   Terrain(int id, RenderWindow* window) : Tile(id, window) {};
-  ~Terrain();
   void onClick() override;
 };

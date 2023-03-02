@@ -5,6 +5,7 @@
 #include <SDL2/SDL_render.h>
 #include <iostream>
 
+// constructors
 RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h) : window_(NULL), renderer_(NULL) {
   window_ = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN);
   if (window_ == NULL) {
@@ -15,6 +16,14 @@ RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h) : window_(NULL
   SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
 }
 
+RenderWindow::~RenderWindow() {
+  SDL_DestroyWindow(window_);
+  SDL_DestroyRenderer(renderer_);
+  std::cout << "Window destroyed.\n";
+}
+
+
+//  functions
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath) {
   SDL_Texture* texture = NULL;
   texture = IMG_LoadTexture(renderer_, p_filePath);
@@ -39,10 +48,4 @@ void RenderWindow::render(SDL_Texture* p_tex, SDL_Rect p_dst) {
 
 void RenderWindow::display() {
   SDL_RenderPresent(renderer_);
-}
-
-RenderWindow::~RenderWindow() {
-  SDL_DestroyWindow(window_);
-  SDL_DestroyRenderer(renderer_);
-  std::cout << "Window destroyed.\n";
 }

@@ -11,6 +11,8 @@ class Unit {
 public:
   Unit(std::string country, std::string name, RenderWindow* window);
   static Unit* createUnit(std::string country, std::string name, RenderWindow* window);
+  static void destroyUnit(Unit*);
+  static void setScaling(double scaling);
 
   std::string getName();
   std::string getCountry();
@@ -20,13 +22,11 @@ public:
   void setCountry(std::string country);
   void setGIF(std::string path);
 
-  static void setScaling(double scaling);
-
 private:
   std::string name_;
   std::string country_;
   static inline double scaling_ = 1;
 
-  GIFImage gif_;
+  GIFImage* gif_;
   RenderWindow* window_;
 };
