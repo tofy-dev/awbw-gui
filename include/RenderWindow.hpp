@@ -13,6 +13,7 @@ public:
   void clear();
   void render(SDL_Texture* p_tex, SDL_Rect p_dst);
   void display();
+  void setSize(int w, int h);
 
 private:
   SDL_Window* window_;

@@ -23,9 +23,11 @@ int main(int argc, char* args[]) {
     std::cout << "IMG_Init fails with error: " << SDL_GetError() << '\n';
   }
 
-  RenderWindow window("awbw gui", 1280, 720);
+  std::string input_path = "res/inputs/stalingrad.txt";
+  RenderWindow window("awbw gui", 0, 0);
+  Board board(input_path, &window);
+  window.setSize(SCALE*board.getWidth(), SCALE*board.getHeight());
 
-  Board board("res/inputs/stalingrad.txt", &window);
   board.renderBoard();
   window.display();
 
@@ -33,11 +35,12 @@ int main(int argc, char* args[]) {
   int frame = 0;
   SDL_Event event;
 
-  LTimer capTimer;
-  LTimer animTimer;
-  animTimer.start();
+  LTimer cap_timer;
+  LTimer anim_timer;
+  anim_timer.start();
+
   while (running) {
-    capTimer.start(); 
+    cap_timer.start(); 
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT)
         running = false;
@@ -49,26 +52,26 @@ int main(int argc, char* args[]) {
           board.wipeUnits();
         }
         if (event.key.keysym.sym == SDLK_SPACE) {
-          if (animTimer.isPaused()) animTimer.start();
-          else animTimer.pause();
+          if (anim_timer.isPaused()) anim_timer.start();
+          else anim_timer.pause();
         }
       }
     }
     // TODO: make not arbitrary
-    int animTicks = animTimer.getTicks();
-    if (animTicks >= SCREEN_TICKS_PER_FRAME*50) {
+    int anim_ticks = anim_timer.getTicks();
+    if (anim_ticks >= SCREEN_TICKS_PER_FRAME*50) {
       board.flash();
-      animTimer.stop();
-      animTimer.start();
+      anim_timer.stop();
+      anim_timer.start();
     }
     board.renderBoard();
     window.display();
 
-    int capTicks = capTimer.getTicks();
-    if (capTicks < SCREEN_TICKS_PER_FRAME ) {
-        SDL_Delay(SCREEN_TICKS_PER_FRAME - capTicks);
+    int cap_ticks = cap_timer.getTicks();
+    if (cap_ticks < SCREEN_TICKS_PER_FRAME ) {
+        SDL_Delay(SCREEN_TICKS_PER_FRAME - cap_ticks);
     }
-    capTimer.stop();
+    cap_timer.stop();
   }
 
   SDL_Quit();

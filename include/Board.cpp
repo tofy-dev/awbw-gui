@@ -4,19 +4,19 @@
 #include <vector>
 #include <iostream>
 #include <memory>
+#include <cassert>
 
 #include "Board.hpp"
 #include "GIFWrapper.hpp"
 #include "Tile.hpp"
 #include "RenderWindow.hpp"
 
-#define SCALE 30
-
+// constructors + static functions
 Board::Board(std::string path, RenderWindow* window) : window_(window) {
   Tile::setScaling(SCALE/16.f);
   Unit::setScaling(SCALE/16.f);
 
-  freopen(path.c_str(), "r", stdin);
+  FILE* fp = freopen(path.c_str(), "r", stdin);
   std::string line;
 
   while (std::getline(std::cin, line)) {
@@ -34,7 +34,7 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
     rows_++;
   }
 
-  std::cout << rows_ << " by " << cols_ << '\n';
+  fclose(fp);
 }
 
 Board::~Board() {
@@ -54,6 +54,7 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
   Tile* tile = grid_[y/SCALE][x/SCALE];
 
   if (unit_storage_ != nullptr) {
+    if (tile->getUnit() != nullptr) return;
     tile->setUnit(unit_storage_);
     unit_storage_ = nullptr;
   } else if (tile->getUnit() != nullptr) {
@@ -62,7 +63,7 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
   } else {
     switch (event->button) {
       case SDL_BUTTON_LEFT:
-        tile->setUnit(Unit::createUnit("random", "mech", window_));
+        tile->setUnit(Unit::createUnit("random", "infantry", window_));
         break;
     }
   }
@@ -117,3 +118,8 @@ void Board::wipeUnits() {
     }
   }
 }
+
+
+int Board::getWidth() { return cols_; }
+
+int Board::getHeight() { return rows_; }

@@ -6,6 +6,8 @@
 #include "Tile.hpp"
 #include "Unit.hpp"
 
+#define SCALE 30
+
 class Board {
 public:
   Board(std::string path, RenderWindow* window);
@@ -15,6 +17,9 @@ public:
   void renderBoard();
   void wipeUnits();
   void flash();
+
+  int getWidth();
+  int getHeight();
 
 private:
   Unit* unit_storage_ = nullptr;

@@ -49,3 +49,7 @@ void RenderWindow::render(SDL_Texture* p_tex, SDL_Rect p_dst) {
 void RenderWindow::display() {
   SDL_RenderPresent(renderer_);
 }
+
+void RenderWindow::setSize(int w, int h) {
+  SDL_SetWindowSize(window_, w, h);
+}
