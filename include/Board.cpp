@@ -37,6 +37,17 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
   std::cout << rows_ << " by " << cols_ << '\n';
 }
 
+Board::~Board() {
+  for (int r = 0; r < rows_; r++) {
+    for (int c = 0; c < cols_; c++) {
+      std::cout << r << " " << c << '\n';
+      if (grid_[r][c]->getUnit() != nullptr)
+        Unit::destroyUnit(grid_[r][c]->getUnit());
+      Tile::destroyTile(grid_[r][c]);
+    }
+  }     
+}
+
 void Board::handleClick(SDL_MouseButtonEvent* event) {
   int x = event->x, y = event->y;
   if (y >= rows_*SCALE || x >= cols_*SCALE) return;

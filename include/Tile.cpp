@@ -41,6 +41,11 @@ Tile* Tile::createTile(int id, RenderWindow* window) {
   return tile;
 }
 
+void Tile::destroyTile(Tile* tile) {
+  std::cout << "destroy tile\n";
+  delete tile;
+}
+
 std::string Tile::getName(int id) {
   std::string name = terrain_list_[id];
   name.erase(std::remove_if(name.begin(), name.end(), [](unsigned char x) { return std::isspace(x); }), name.end());
@@ -71,35 +76,44 @@ void Tile::setUnit(Unit* unit) {
 void City::onClick() {
   std::cout << "city" << '\n';
 }
+City::~City() = default;
 
 void Base::onClick() {
   std::cout << "base" << '\n';
 }
+Base::~Base() = default;
 
 void Airport::onClick() {
   std::cout << "airport" << '\n';
 }
+Airport::~Airport() = default;
 
 void Port::onClick() {
   std::cout << "port" << '\n';
 }
+Port::~Port() = default;
 
 void HQ::onClick() {
   std::cout << "hq" << '\n';
 }
+HQ::~HQ() = default;
 
 void Lab::onClick() {
   std::cout << "lab" << '\n';
 }
+Lab::~Lab() = default;
 
 void ComTower::onClick() {
   std::cout << "comtower" << '\n';
 }
+ComTower::~ComTower() = default;
 
 void Mountain::onClick() {
   std::cout << "mountain" << '\n';
 }
+Mountain::~Mountain() = default;
 
 void Terrain::onClick() {
   std::cout << "terrain/" << getName(id_) << '\n';
 }
+Terrain::~Terrain() = default;

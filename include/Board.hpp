@@ -9,6 +9,8 @@
 class Board {
 public:
   Board(std::string path, RenderWindow* window);
+  ~Board();
+
   void handleClick(SDL_MouseButtonEvent*);
   void renderBoard();
   void addUnit(std::string country, std::string name, int x, int y);
