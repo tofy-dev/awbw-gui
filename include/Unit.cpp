@@ -9,6 +9,8 @@ Unit::Unit(std::string country, std::string name, RenderWindow* window) :
   gif_{GIFImage::createGIF("res/assets/units/" + country + name + ".gif", scaling_, window)} {};
 
 Unit* Unit::createUnit(std::string country, std::string name, RenderWindow* window) {
+  if (country == "random")
+    country = nat_arr_[rand()%NATION_AMT];
   Unit* unit = new Unit(country, name, window);
   return unit;
 }

@@ -66,8 +66,10 @@ GIFImage* Tile::getGIF() { return &gif_; }
 
 
 // setters
-void Tile::setUnit(Unit* unit) {
-  if (unit_ != nullptr)
+void Tile::setUnit(Unit* unit) { setUnit(unit, true); }
+
+void Tile::setUnit(Unit* unit, bool destroy) {
+  if (destroy && unit_ != nullptr)
     Unit::destroyUnit(unit_);
   unit_ = unit;
 }

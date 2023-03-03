@@ -28,6 +28,7 @@ public:
   GIFImage* getGIF();
 
   void setUnit(Unit* unit);
+  void setUnit(Unit* unit, bool destroy);
 
 protected:
   int id_;

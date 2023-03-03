@@ -106,11 +106,11 @@ GIFImage* GIFImage::createGIF(std::string path, double scale, RenderWindow* wind
 }
 
 void GIFImage::destroyGIF(GIFImage* image) {
+  std::cout << "gif destroyed\n";
   for (int f = 0; f < image->getTotalFrames(); f++) {
     image->setFrameNumber(f);
     SDL_DestroyTexture(image->getFrame()->texture_);
     SDL_FreeSurface(image->getFrame()->surface_);
-
   }
   delete image;
 }

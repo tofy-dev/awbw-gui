@@ -51,15 +51,22 @@ Board::~Board() {
 void Board::handleClick(SDL_MouseButtonEvent* event) {
   int x = event->x, y = event->y;
   if (y >= rows_*SCALE || x >= cols_*SCALE) return;
-  switch (event->button) {
-    case SDL_BUTTON_LEFT:
-      addUnit("os", "mech", x/SCALE, y/SCALE);
-      break;
-    case SDL_BUTTON_RIGHT:
-      addUnit("bh", "mech", x/SCALE, y/SCALE);
-      break;
+  Tile* tile = grid_[y/SCALE][x/SCALE];
+
+  if (unit_storage_ != nullptr) {
+    tile->setUnit(unit_storage_);
+    unit_storage_ = nullptr;
+  } else if (tile->getUnit() != nullptr) {
+    unit_storage_ = tile->getUnit();
+    tile->setUnit(nullptr, false);
+  } else {
+    switch (event->button) {
+      case SDL_BUTTON_LEFT:
+        tile->setUnit(Unit::createUnit("random", "mech", window_));
+        break;
+    }
   }
-  grid_[y/SCALE][x/SCALE]->onClick();
+  tile->onClick();
 }
 
 void Board::renderBoard() {
@@ -101,10 +108,6 @@ void Board::flash() {
       }
     }
   }
-}
-
-void Board::addUnit(std::string country, std::string name, int x, int y) {
-  grid_[y][x]->setUnit(Unit::createUnit(country, name, window_));
 }
 
 void Board::wipeUnits() {

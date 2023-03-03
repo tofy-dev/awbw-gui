@@ -6,6 +6,9 @@
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <string>
+#include <array>
+
+#define NATION_AMT 16
 
 class Unit {
 public:
@@ -25,8 +28,10 @@ public:
 private:
   std::string name_;
   std::string country_;
-  static inline double scaling_ = 1;
 
   GIFImage* gif_;
   RenderWindow* window_;
+
+  static inline double scaling_ = 1;
+  static inline std::array<std::string, NATION_AMT> nat_arr_ = {"os", "bm", "ge", "yc", "bh", "rf", "gs", "bd", "ab", "js", "ci", "pc", "tg", "pl", "ar", "wn"};
 };
