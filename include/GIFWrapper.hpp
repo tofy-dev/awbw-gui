@@ -11,6 +11,8 @@ class GIFFrame {
 public:
   int raw_w_, raw_h_;
   int disposal_method_;
+  int delay_;
+  int ticks_;
 
   SDL_Texture* texture_;
   SDL_Surface* surface_;

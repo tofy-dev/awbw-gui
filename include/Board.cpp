@@ -63,11 +63,33 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
   } else {
     switch (event->button) {
       case SDL_BUTTON_LEFT:
-        tile->setUnit(Unit::createUnit("random", "infantry", window_));
+        tile->setUnit(Unit::createUnit("random", "tank", window_));
         break;
     }
   }
   tile->onClick();
+}
+
+void Board::updateFrames(int amount) {
+  for (int r = 0; r < rows_; r++) {
+    for (int c = 0; c < cols_; c++) {
+      GIFImage* gif = grid_[r][c]->getGIF();
+      gif->getFrame()->ticks_ += amount;
+      if (gif->getFrame()->ticks_ >= gif->getFrame()->delay_) {
+        gif->setFrameNumber((gif->getFrameNumber() + 1) % gif->getTotalFrames());
+        gif->getFrame()->ticks_ = 0;
+      }
+
+      if (grid_[r][c]->getUnit() != nullptr) {
+        GIFImage* gif2 = grid_[r][c]->getUnit()->getGIF();
+        gif2->getFrame()->ticks_ += amount;
+        if (gif2->getFrame()->ticks_ == gif2->getFrame()->delay_) {
+          gif2->setFrameNumber((gif2->getFrameNumber() + 1) % gif2->getTotalFrames());
+          gif2->getFrame()->ticks_ = 0;
+        }
+      }
+    }
+  }
 }
 
 void Board::renderBoard() {
@@ -92,20 +114,6 @@ void Board::renderBoard() {
         dst.w = unit->getGIF()->getWidth(); dst.h = unit->getGIF()->getHeight();
 
         window_->render(tile->getUnit()->getGIF()->getTexture(), dst);
-      }
-    }
-  }
-}
-
-// TODO: bad naming, temp
-void Board::flash() {
-  for (int r = 0; r < rows_; r++) {
-    for (int c = 0; c < cols_; c++) {
-      GIFImage* gif = grid_[r][c]->getGIF();
-      gif->setFrameNumber((gif->getFrameNumber() + 1) % gif->getTotalFrames());
-      if (grid_[r][c]->getUnit() != nullptr) {
-        GIFImage* gif2 = grid_[r][c]->getUnit()->getGIF();
-        gif2->setFrameNumber((gif2->getFrameNumber() + 1) % gif2->getTotalFrames());
       }
     }
   }

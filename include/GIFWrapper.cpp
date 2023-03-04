@@ -65,6 +65,11 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
         // Disposal mode
         Uint8 disposal_method = block[0] >> 2;
         frame->disposal_method_ = disposal_method;
+
+        // Find delay (in hundreths of seconds)
+        // note: this ignores block two
+        std::cout << (int)block[1] << '\n';
+        frame->delay_ = block[1]*10;
       }
     }
 

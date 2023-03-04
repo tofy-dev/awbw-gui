@@ -13,10 +13,10 @@ public:
   Board(std::string path, RenderWindow* window);
   ~Board();
 
-  void handleClick(SDL_MouseButtonEvent*);
+  void handleClick(SDL_MouseButtonEvent* event);
   void renderBoard();
+  void updateFrames(int amount);
   void wipeUnits();
-  void flash();
 
   int getWidth();
   int getHeight();

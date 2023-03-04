@@ -36,8 +36,6 @@ int main(int argc, char* args[]) {
   SDL_Event event;
 
   LTimer cap_timer;
-  LTimer anim_timer;
-  anim_timer.start();
 
   while (running) {
     cap_timer.start(); 
@@ -51,19 +49,10 @@ int main(int argc, char* args[]) {
         if (event.key.keysym.sym == SDLK_BACKSPACE) {
           board.wipeUnits();
         }
-        if (event.key.keysym.sym == SDLK_SPACE) {
-          if (anim_timer.isPaused()) anim_timer.start();
-          else anim_timer.pause();
-        }
       }
     }
-    // TODO: make not arbitrary
-    int anim_ticks = anim_timer.getTicks();
-    if (anim_ticks >= SCREEN_TICKS_PER_FRAME*50) {
-      board.flash();
-      anim_timer.stop();
-      anim_timer.start();
-    }
+
+    board.updateFrames(SCREEN_TICKS_PER_FRAME);
     board.renderBoard();
     window.display();
 
