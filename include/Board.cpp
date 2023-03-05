@@ -1,10 +1,12 @@
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_surface.h>
 #include <cstdio>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <memory>
 #include <cassert>
+
 
 #include "Board.hpp"
 #include "GIFWrapper.hpp"
@@ -35,6 +37,9 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
   }
 
   fclose(fp);
+  std::cout << "before blue\n";
+  blue = GIFImage::createGIF("res/assets/custom/blue.gif", SCALE/16.f, window_);
+  std::cout << "finish initing board\n";
 }
 
 Board::~Board() {
@@ -61,11 +66,17 @@ void Board::handleClick(SDL_MouseButtonEvent* event) {
     unit_storage_ = tile->getUnit();
     tile->setUnit(nullptr, false);
   } else {
+    Unit* unit;
     switch (event->button) {
       case SDL_BUTTON_LEFT:
-        tile->setUnit(Unit::createUnit("random", "tank", window_));
+        unit = Unit::createUnit("os", "mech", window_);
+        break;
+      case SDL_BUTTON_RIGHT:
+        unit = Unit::createUnit("bm", "mech", window_);
         break;
     }
+    tile->setUnit(unit);
+    units_.push_back(unit);
   }
   tile->onClick();
 }
@@ -114,6 +125,7 @@ void Board::renderBoard() {
         dst.w = unit->getGIF()->getWidth(); dst.h = unit->getGIF()->getHeight();
 
         window_->render(tile->getUnit()->getGIF()->getTexture(), dst);
+        window_->render(blue->getTexture(), dst);
       }
     }
   }

@@ -23,7 +23,9 @@ private:
 class GIFImage {
 #include "GIFWrapper.hpp"
 public:
+  GIFImage(int r, int g, int b);
   GIFImage(std::string path, double scale, RenderWindow* window);
+
   static GIFImage* createGIF(std::string path, double scale, RenderWindow* window);
   static void destroyGIF(GIFImage* image);
   static SDL_Surface* createSurface(int width, int height);

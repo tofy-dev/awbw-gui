@@ -22,9 +22,13 @@ public:
   int getHeight();
 
 private:
+  std::vector<std::vector<Tile*>> grid_;
+  std::vector<Unit*> units_;
   Unit* unit_storage_ = nullptr;
 
-  RenderWindow* window_;
-  std::vector<std::vector<Tile*>> grid_;
   int rows_ = 0, cols_ = 0;
+  RenderWindow* window_;
+
+  // TODO: delete
+  GIFImage* blue;
 };

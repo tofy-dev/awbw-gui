@@ -24,7 +24,7 @@ int main(int argc, char* args[]) {
   }
 
   std::string input_path = "res/inputs/stalingrad.txt";
-  RenderWindow window("awbw gui", 0, 0);
+  RenderWindow window("AWBW Gui", 0, 0);
   Board board(input_path, &window);
   window.setSize(SCALE*board.getWidth(), SCALE*board.getHeight());
 

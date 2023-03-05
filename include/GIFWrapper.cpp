@@ -18,20 +18,27 @@
 #define GIF_WIPE 2
 
 // constructors + static functions
+GIFImage::GIFImage(int r, int g, int b) {
+  total_frames_ = 1;
+  frame_num_ = 0;
+}
+
 GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
   GifFileType* gif;
   int error = -1;
   gif = DGifOpenFileName(path.c_str(), &error);
   assert(gif != NULL && DGifSlurp(gif) != GIF_ERROR);
 
-  SDL_Color* global_colors = (SDL_Color*)SDL_malloc(sizeof(SDL_Color)*gif->SColorMap->ColorCount);
-  for (int i = 0; i < gif->SColorMap->ColorCount; i++) {
-    global_colors[i].r = gif->SColorMap->Colors[i].Red;
-    global_colors[i].g = gif->SColorMap->Colors[i].Green;
-    global_colors[i].b = gif->SColorMap->Colors[i].Blue;
-    global_colors[i].a = 255;
+  SDL_Color* global_colors = NULL;
+  if (gif->SColorMap != NULL) {
+    global_colors = (SDL_Color*)SDL_malloc(sizeof(SDL_Color)*gif->SColorMap->ColorCount);
+    for (int i = 0; i < gif->SColorMap->ColorCount; i++) {
+      global_colors[i].r = gif->SColorMap->Colors[i].Red;
+      global_colors[i].g = gif->SColorMap->Colors[i].Green;
+      global_colors[i].b = gif->SColorMap->Colors[i].Blue;
+      global_colors[i].a = 255;
+    }
   }
-  assert(global_colors != NULL);
 
   total_frames_ = gif->ImageCount;
   frame_num_ = 0;
@@ -41,12 +48,19 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
   frames_ = std::vector<GIFFrame*>(gif->ImageCount);
   for (int f = 0; f < gif->ImageCount; f++) {
     SavedImage* img = &gif->SavedImages[f];
-    GIFFrame* frame = (GIFFrame*)SDL_malloc(sizeof(GIFFrame));
-    memset(frame, 0, sizeof(GIFFrame));
+    GIFFrame* frame = new GIFFrame();
 
     SDL_Color* local_colors = NULL;
     if (img->ImageDesc.ColorMap != NULL) {
-      local_colors = (SDL_Color*)SDL_malloc(sizeof(SDL_Color)*gif->SColorMap->ColorCount);
+      local_colors = (SDL_Color*)SDL_malloc(sizeof(SDL_Color)*img->ImageDesc.ColorMap->ColorCount);
+      for (int i = 0; i < img->ImageDesc.ColorMap->ColorCount; i++) {
+        local_colors[i].r = img->ImageDesc.ColorMap->Colors[i].Red;
+        local_colors[i].g = img->ImageDesc.ColorMap->Colors[i].Green;
+        local_colors[i].b = img->ImageDesc.ColorMap->Colors[i].Blue;
+        local_colors[i].a = 255;
+      }
+      if (path == "res/assets/custom/blue.gif")
+        std::cout << "CC: " << img->ImageDesc.ColorMap->ColorCount << '\n';
     }
 
     frames_[f] = frame;
@@ -68,7 +82,6 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
 
         // Find delay (in hundreths of seconds)
         // note: this ignores block two
-        std::cout << (int)block[1] << '\n';
         frame->delay_ = block[1]*10;
       }
     }
@@ -83,11 +96,18 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
     }
     
     SDL_Color* color_src = (local_colors == NULL) ? global_colors : local_colors;
+    assert(color_src != NULL);
+
     int total_pixels = frame->raw_w_ * frame->raw_h_;
     int left_off = img->ImageDesc.Left;
     int top_off = img->ImageDesc.Top;
 
+    if (path == "res/assets/custom/blue.gif")
+      std::cout << "COLORSOURCE " << ((color_src == local_colors) ? "LOCAL" : "GLOBAL") << "\n";
+
     for (int p = 0; p < total_pixels; p++) {
+      if (path == "res/assets/custom/blue.gif")
+        std::cout << "RB: " << (int)img->RasterBits[p] << '\n';
       SDL_Color c = color_src[img->RasterBits[p]];
       c.a = (is_transparent && transparent_index == img->RasterBits[p]) ? 0 : 255;
       if (c.a != 0)
@@ -95,14 +115,15 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
     }
 
     frame->texture_ = window->loadTexture(frame->surface_);
-    free(local_colors);
+    if (local_colors != NULL) free(local_colors);
   }
 
-  free(global_colors);
+  if (global_colors != NULL) free(global_colors);
   DGifCloseFile(gif, &error);
 
   max_w_ *= scale;
   max_h_ *= scale;
+  
 }
 
 GIFImage* GIFImage::createGIF(std::string path, double scale, RenderWindow* window) {
@@ -110,12 +131,14 @@ GIFImage* GIFImage::createGIF(std::string path, double scale, RenderWindow* wind
   return image;
 }
 
+// TODO: maybe redo to put destroyers in frame destructor
 void GIFImage::destroyGIF(GIFImage* image) {
   std::cout << "gif destroyed\n";
   for (int f = 0; f < image->getTotalFrames(); f++) {
     image->setFrameNumber(f);
     SDL_DestroyTexture(image->getFrame()->texture_);
     SDL_FreeSurface(image->getFrame()->surface_);
+    delete image->getFrame();
   }
   delete image;
 }
