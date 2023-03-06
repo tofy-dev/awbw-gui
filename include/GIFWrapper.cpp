@@ -18,12 +18,11 @@
 #define GIF_WIPE 2
 
 // constructors + static functions
-GIFImage::GIFImage(int r, int g, int b) {
-  total_frames_ = 1;
-  frame_num_ = 0;
+// TODO: do gradient eventually
+GIFImage::GIFImage(int r, int g, int b, int max_alpha) {
 }
 
-GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
+GIFImage::GIFImage(std::string path, double scale, int max_alpha, RenderWindow* window) {
   GifFileType* gif;
   int error = -1;
   gif = DGifOpenFileName(path.c_str(), &error);
@@ -62,7 +61,6 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
       if (path == "res/assets/custom/blue.gif")
         std::cout << "CC: " << img->ImageDesc.ColorMap->ColorCount << '\n';
     }
-
     frames_[f] = frame;
 
     int transparent_index;
@@ -102,14 +100,11 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
     int left_off = img->ImageDesc.Left;
     int top_off = img->ImageDesc.Top;
 
-    if (path == "res/assets/custom/blue.gif")
-      std::cout << "COLORSOURCE " << ((color_src == local_colors) ? "LOCAL" : "GLOBAL") << "\n";
-
     for (int p = 0; p < total_pixels; p++) {
       if (path == "res/assets/custom/blue.gif")
         std::cout << "RB: " << (int)img->RasterBits[p] << '\n';
       SDL_Color c = color_src[img->RasterBits[p]];
-      c.a = (is_transparent && transparent_index == img->RasterBits[p]) ? 0 : 255;
+      c.a = (is_transparent && transparent_index == img->RasterBits[p]) ? 0 : max_alpha;
       if (c.a != 0)
         setPixel(frame->surface_, left_off + p%frame->raw_w_, top_off + p/frame->raw_w_, SDL_MapRGBA(frame->surface_->format, c.r, c.g, c.b, c.a));
     }
@@ -127,8 +122,10 @@ GIFImage::GIFImage(std::string path, double scale, RenderWindow* window) {
 }
 
 GIFImage* GIFImage::createGIF(std::string path, double scale, RenderWindow* window) {
-  GIFImage* image = new GIFImage(path, scale, window);
-  return image;
+  return createGIF(path, scale, 255, window);
+}
+GIFImage* GIFImage::createGIF(std::string path, double scale, int max_alpha, RenderWindow* window) {
+  return new GIFImage(path, scale, max_alpha, window);
 }
 
 // TODO: maybe redo to put destroyers in frame destructor

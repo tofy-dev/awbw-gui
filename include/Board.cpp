@@ -38,7 +38,7 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
 
   fclose(fp);
   std::cout << "before blue\n";
-  blue = GIFImage::createGIF("res/assets/custom/blue.gif", SCALE/16.f, window_);
+  blue = GIFImage::createGIF("res/assets/custom/blue.gif", SCALE/16.f, 100, window_);
   std::cout << "finish initing board\n";
 }
 
@@ -125,7 +125,7 @@ void Board::renderBoard() {
         dst.w = unit->getGIF()->getWidth(); dst.h = unit->getGIF()->getHeight();
 
         window_->render(tile->getUnit()->getGIF()->getTexture(), dst);
-        window_->render(blue->getTexture(), dst);
+        // window_->render(blue->getTexture(), dst);
       }
     }
   }

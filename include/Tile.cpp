@@ -13,7 +13,7 @@
 // constructors + static functions
 Tile::Tile(int id, RenderWindow* window) : 
   id_{id}, window_(window),
-  gif_{GIFImage("res/assets/tiles/" + getName(id) + ".gif", scaling_, window)} {};
+  gif_{GIFImage::createGIF("res/assets/tiles/" + getName(id) + ".gif", scaling_, window)} {};
 
 Tile* Tile::createTile(int id, RenderWindow* window) {
   std::string name = Tile::getName(id);
@@ -62,7 +62,7 @@ Unit* Tile::getUnit() { return unit_; }
 
 int Tile::getId() { return id_; }
 
-GIFImage* Tile::getGIF() { return &gif_; }
+GIFImage* Tile::getGIF() { return gif_; }
 
 
 // setters

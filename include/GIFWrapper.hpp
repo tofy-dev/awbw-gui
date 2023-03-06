@@ -23,10 +23,11 @@ private:
 class GIFImage {
 #include "GIFWrapper.hpp"
 public:
-  GIFImage(int r, int g, int b);
-  GIFImage(std::string path, double scale, RenderWindow* window);
+  GIFImage(int r, int g, int b, int max_alpha);
+  GIFImage(std::string path, double scale, int max_alpha, RenderWindow* window);
 
   static GIFImage* createGIF(std::string path, double scale, RenderWindow* window);
+  static GIFImage* createGIF(std::string path, double scale, int max_alpha, RenderWindow* window);
   static void destroyGIF(GIFImage* image);
   static SDL_Surface* createSurface(int width, int height);
   static void setPixel(SDL_Surface* surface, int x, int y, Uint32 color);
@@ -46,8 +47,8 @@ public:
 
 private:
   int max_w_, max_h_;
-  int total_frames_;
 
   std::vector<GIFFrame*> frames_;
+  int total_frames_;
   int frame_num_;
 };
