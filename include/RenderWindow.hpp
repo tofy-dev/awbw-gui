@@ -11,6 +11,7 @@ public:
   SDL_Texture* loadTexture(SDL_Surface* p_surface);
 
   void clear();
+  void render(SDL_Texture* p_tex);
   void render(SDL_Texture* p_tex, SDL_Rect p_dst);
   void display();
   void setSize(int w, int h);

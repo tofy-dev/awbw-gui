@@ -7,7 +7,7 @@
 
 // constructors
 RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h) : window_(NULL), renderer_(NULL) {
-  window_ = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN);
+  window_ = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
   if (window_ == NULL) {
     std::cout << "SDL_CreateWindow failed with error: " << SDL_GetError() << '\n';
   }
@@ -23,7 +23,7 @@ RenderWindow::~RenderWindow() {
 }
 
 
-//  functions
+// functions
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath) {
   SDL_Texture* texture = NULL;
   texture = IMG_LoadTexture(renderer_, p_filePath);
@@ -40,6 +40,10 @@ SDL_Texture* RenderWindow::loadTexture(SDL_Surface* p_surface) {
 
 void RenderWindow::clear() {
   SDL_RenderClear(renderer_);
+}
+
+void RenderWindow::render(SDL_Texture* p_tex) {
+  SDL_RenderCopy(renderer_, p_tex, NULL, NULL);
 }
 
 void RenderWindow::render(SDL_Texture* p_tex, SDL_Rect p_dst) {

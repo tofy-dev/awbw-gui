@@ -23,10 +23,14 @@ GIFImage::GIFImage(int r, int g, int b, int max_alpha) {
 }
 
 GIFImage::GIFImage(std::string path, double scale, int max_alpha, RenderWindow* window) {
+  std::cout << "Loading " << path << '\n';
+
   GifFileType* gif;
   int error = -1;
   gif = DGifOpenFileName(path.c_str(), &error);
-  assert(gif != NULL && DGifSlurp(gif) != GIF_ERROR);
+
+  assert(gif != NULL);
+  assert(DGifSlurp(gif) != GIF_ERROR);
 
   SDL_Color* global_colors = NULL;
   if (gif->SColorMap != NULL) {
@@ -44,11 +48,16 @@ GIFImage::GIFImage(std::string path, double scale, int max_alpha, RenderWindow* 
   max_w_ = gif->SWidth;
   max_h_ = gif->SHeight;
 
+  std::cout << "DIMS: " << max_w_ << "x" << max_h_ << '\n';
+  std::cout << "FRAMES: " << gif->ImageCount << '\n';
+
   frames_ = std::vector<GIFFrame*>(gif->ImageCount);
   for (int f = 0; f < gif->ImageCount; f++) {
+    std::cout << "START FRAME " << f << '\n';
     SavedImage* img = &gif->SavedImages[f];
     GIFFrame* frame = new GIFFrame();
 
+    std::cout << "LOAD LOCAL COLORS" << '\n';
     SDL_Color* local_colors = NULL;
     if (img->ImageDesc.ColorMap != NULL) {
       local_colors = (SDL_Color*)SDL_malloc(sizeof(SDL_Color)*img->ImageDesc.ColorMap->ColorCount);
@@ -63,9 +72,10 @@ GIFImage::GIFImage(std::string path, double scale, int max_alpha, RenderWindow* 
     }
     frames_[f] = frame;
 
+    std::cout << "SET TRANSPARENCY" << '\n';
     int transparent_index;
     bool is_transparent;
-    for(int b = 0; b < img->ExtensionBlockCount; b++) {
+    for(int b = 0; b < img->ExtensionBlockCount; b++) {	
       if(img->ExtensionBlocks[b].Function == GRAPHICS_EXT_FUNC_CODE) {
         Uint8 block[4];
         memcpy(block, img->ExtensionBlocks[b].Bytes, 4);
@@ -84,6 +94,7 @@ GIFImage::GIFImage(std::string path, double scale, int max_alpha, RenderWindow* 
       }
     }
 
+    std::cout << "GENERATE SURFACE" << '\n';
     frame->surface_ = createSurface(max_w_, max_h_);
     frame->raw_w_ = img->ImageDesc.Width;
     frame->raw_h_ = img->ImageDesc.Height;
@@ -101,6 +112,7 @@ GIFImage::GIFImage(std::string path, double scale, int max_alpha, RenderWindow* 
     int top_off = img->ImageDesc.Top;
 
     for (int p = 0; p < total_pixels; p++) {
+      // TODO: make not temporary
       if (path == "res/assets/custom/blue.gif")
         std::cout << "RB: " << (int)img->RasterBits[p] << '\n';
       SDL_Color c = color_src[img->RasterBits[p]];
@@ -110,15 +122,20 @@ GIFImage::GIFImage(std::string path, double scale, int max_alpha, RenderWindow* 
     }
 
     frame->texture_ = window->loadTexture(frame->surface_);
-    if (local_colors != NULL) free(local_colors);
+    std::cout << "FREE local_colors\n";
+    if (local_colors != NULL) SDL_free(local_colors);
   }
 
-  if (global_colors != NULL) free(global_colors);
+  std::cout << "FREE global_colors\n";
+  if (global_colors != NULL) SDL_free(global_colors);
+
+  std::cout << "CLOSE FILE\n";
   DGifCloseFile(gif, &error);
 
   max_w_ *= scale;
   max_h_ *= scale;
   
+  std::cout << "Finished loading gif.\n";
 }
 
 GIFImage* GIFImage::createGIF(std::string path, double scale, RenderWindow* window) {

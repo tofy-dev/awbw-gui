@@ -30,6 +30,8 @@ Board::Board(std::string path, RenderWindow* window) : window_(window) {
         row.push_back(Tile::createTile(id, window));
         s = i+1;
         if (rows_ == 0) cols_++;
+
+	std::cout << "CREATE TILE\n";
       }
     }
     grid_.push_back(row);
@@ -104,6 +106,8 @@ void Board::updateFrames(int amount) {
 }
 
 void Board::renderBoard() {
+  std::cout << "RENDER BOARD\n";
+
   SDL_Rect dst;
   Tile* tile;
   Unit* unit;
@@ -129,6 +133,8 @@ void Board::renderBoard() {
       }
     }
   }
+
+  std::cout << "FINISH RENDER\n";
 }
 
 void Board::wipeUnits() {

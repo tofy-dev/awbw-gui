@@ -38,6 +38,8 @@ Tile* Tile::createTile(int id, RenderWindow* window) {
     tile = (new Mountain(id, window));
   else
     tile = (new Terrain(id, window));
+
+  std::cout << "tile created successfully\n";
   return tile;
 }
 

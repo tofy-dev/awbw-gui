@@ -1,3 +1,5 @@
+#define SDL_MAIN_HANDLED
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "SDL2/SDL_events.h"
@@ -23,21 +25,34 @@ int main(int argc, char* args[]) {
     std::cout << "IMG_Init fails with error: " << SDL_GetError() << '\n';
   }
 
+  /*
+  RenderWindow window("AWBW Gui", 500, 500);
+  window.render(window.loadTexture("res/assets/units/osmech.gif"));
+  window.display();
+
+  bool running = true;
+  SDL_Event event;
+
+  while (running) {
+    while (SDL_PollEvent(&event)) {
+      if (event.type == SDL_QUIT)
+        running = false;
+    }
+  }
+  */
+
   std::string input_path = "res/inputs/stalingrad.txt";
-  RenderWindow window("AWBW Gui", 0, 0);
+  RenderWindow window("AWBW Gui", 500, 500);
   Board board(input_path, &window);
   window.setSize(SCALE*board.getWidth(), SCALE*board.getHeight());
-
-  board.renderBoard();
-  window.display();
 
   bool running = true;
   int frame = 0;
   SDL_Event event;
 
   LTimer cap_timer;
-
   while (running) {
+    std::cout << "frame\n";
     cap_timer.start(); 
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT)
