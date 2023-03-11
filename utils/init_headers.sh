@@ -15,7 +15,7 @@ cd GIFLib
 cmake -G "MinGW Makefiles" .
 cmake --build .
 
-cp *.dll ../bin/
+cp *.dll ../../bin/
 
 cd ..
 
