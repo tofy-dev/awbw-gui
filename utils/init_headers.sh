@@ -1,5 +1,10 @@
 # Script for getting relevant 64bit windows headers
-# Run from the parent awbw-gui directory
+# Run from the parent awbw-gui directory in Bash-CLI
+# Note: wget isn't on Bash-CLI by default; download 64bit exe from https://eternallybored.org/misc/wget/
+#	and run mv C:\[USERNAME]\Downloads\wget.exe C:\Program Files\Git\mingw64\bin
+#	from an ELEVATED PowerShell prompt
+
+mkdir ext
 cd ext
 
 # giflib
@@ -7,8 +12,10 @@ git clone https://github.com/tofy-dev/giflib-cmake
 mv giflib-cmake GIFLib
 cd GIFLib
 
-cmake build .
+cmake -G "MinGW Makefiles" .
 cmake --build .
+
+cp *.dll ../bin/
 
 cd ..
 
@@ -38,5 +45,5 @@ cp SDL2_image-$IMG_VERSION/x86_64-w64-mingw32/bin/*.dll ../bin/
 
 # clean up
 rm *.zip
-rm -r SDL2-$SDL_VERSION
-rm -r SDL2_image-$IMG_VERSION
+rm -rf SDL2-$SDL_VERSION
+rm -rf SDL2_image-$IMG_VERSION

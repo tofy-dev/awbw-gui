@@ -19,3 +19,4 @@ all:
 
 clean:
 	rm -rf bin/output*
+	rm -rf ext/
